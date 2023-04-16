@@ -37,26 +37,26 @@ def Set_frame(UID_D, UID_S, TN, Message_Length, Port_ID, Message_Count, Sub_Devi
     frame.append(PDL)
 
     if (PDL == 12):                               # Frames que tem 12 bytes de UID (lower and upper bound) Disc_unique_branch
-        frame.append((LB_PD >> 40) & 0xff)        # Lower Bound UID bit 5
-        frame.append((LB_PD >> 32) & 0xff)        # Lower Bound UID bit 4
-        frame.append((LB_PD >> 24) & 0xff)        # Lower Bound UID bit 3
-        frame.append((LB_PD >> 16) & 0xff)        # Lower Bound UID bit 2
-        frame.append((LB_PD >> 8) & 0xff)         # Lower Bound UID bit 1
-        frame.append(LB_PD & 0xff)                # Lower Bound UID bit 0
-        frame.append((UB_PD >> 40) & 0xff)        # Upper Bound UID bit 5
-        frame.append((UB_PD >> 32) & 0xff)        # Upper Bound UID bit 4
-        frame.append((UB_PD >> 24) & 0xff)        # Upper Bound UID bit 3
-        frame.append((UB_PD >> 16) & 0xff)        # Upper Bound UID bit 2
-        frame.append((UB_PD >> 8) & 0xff)         # Upper Bound UID bit 1
-        frame.append(UB_PD & 0xff)                # Upper Bound UID bit 0
+        frame.append((LB_PD >> 40) & 0xff)        # Lower Bound UID byte 5
+        frame.append((LB_PD >> 32) & 0xff)        # Lower Bound UID byte 4
+        frame.append((LB_PD >> 24) & 0xff)        # Lower Bound UID byte 3
+        frame.append((LB_PD >> 16) & 0xff)        # Lower Bound UID byte 2
+        frame.append((LB_PD >> 8) & 0xff)         # Lower Bound UID byte 1
+        frame.append(LB_PD & 0xff)                # Lower Bound UID byte 0
+        frame.append((UB_PD >> 40) & 0xff)        # Upper Bound UID byte 5
+        frame.append((UB_PD >> 32) & 0xff)        # Upper Bound UID byte 4
+        frame.append((UB_PD >> 24) & 0xff)        # Upper Bound UID byte 3
+        frame.append((UB_PD >> 16) & 0xff)        # Upper Bound UID byte 2
+        frame.append((UB_PD >> 8) & 0xff)         # Upper Bound UID byte 1
+        frame.append(UB_PD & 0xff)                # Upper Bound UID byte 0
 
         checksum = Calc_checksum(36, frame)
         frame.append((checksum >> 8) & 0xff)      # Checksum high
         frame.append(checksum & 0xff)             # Checksum low
 
     elif (PDL == 2):                              # Para o Get_parameter_description
-        frame = (LB_PD >> 8) & 0xff
-        frame = LB_PD & 0xff
+        frame.append((LB_PD >> 8) & 0xff)
+        frame.append(LB_PD & 0xff)
 
         checksum = Calc_checksum(26, frame)
         frame.append((checksum >> 8) & 0xff)

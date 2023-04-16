@@ -1,6 +1,7 @@
+a = 0xffaa11
 
-frame = []
+print(a)
 
-frame.append(41)
-frame.append(52)
-print(frame[1])
+b = (a >> 16) & 0xff
+
+print(hex(b))

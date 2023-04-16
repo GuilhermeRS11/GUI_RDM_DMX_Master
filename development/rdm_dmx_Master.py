@@ -1,4 +1,5 @@
-from PySide6.QtWidgets import (QWidget, QMainWindow)
+from PySide6.QtWidgets import QWidget
+from PySide6.QtCore import Qt
 from RDM_DMX_Master_ui import Ui_MainWindow
 import RDM
 from ast import literal_eval
@@ -11,6 +12,9 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.setWindowTitle("RDM DMX Master")
 
         self.classe.activated.connect(self.ChangeParameter)
+        self.classe.activated.connect(self.caixaCommand)
+        self.parametro.activated.connect(self.clearAddParam)
+        self.parametro.activated.connect(self.caixaCommand)
         self.send_command.clicked.connect(self.SendCommand)
         self.menuSair.triggered.connect(self.quit)
 
@@ -19,30 +23,37 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.source_UID.textEdited.connect(self.caixaCommand)
         self.sub_device.textEdited.connect(self.caixaCommand)
         self.port_ID.textEdited.connect(self.caixaCommand)
+        self.add_param_1.textEdited.connect(self.caixaCommand)
+        self.add_param_2.textEdited.connect(self.caixaCommand)
 
+        # Definição do numero maximo de caracteres em cada parametro
+        self.source_UID.setMaxLength(12)
+        self.destination_UID.setMaxLength(12)
+        self.port_ID.setMaxLength(2)
+        self.sub_device.setMaxLength(4) # É preciso especificar o range deste em cada comando
+
+        self.alignement_labels() # Alinha as caixas de comando ao centro
+
+        
     def ChangeParameter(self):
         classe = self.classe.currentText()
-
+        self.clearAddParam() # Zera as caixas dos parametros extras
+        
         # Aproveitando a chamada para atualizar os demais campos que devem ou não ser ativados
-
         if(classe == "DISC"):
             self.parametro.clear()
-            self.parametro.addItems(["Unique Branch","Mute","Unmute"])
-            
-            self.additional_parameter.setEnabled(False) # Faz com que o parametro adicional não esteja disponivel para edição
+            self.parametro.addItems(["Unique Branch","Mute","Unmute"]) 
                                    
         elif(classe == "GET"):
             self.parametro.clear()
             self.parametro.addItems(["Supported parameters","Parameter description","Device info", "Software version label", "DMX start address", "Identify device"])
-            self.additional_parameter.setEnabled(False) 
 
         else:   # Então é comando SET
             self.parametro.clear()
             self.parametro.addItems(["DMX start address","Identify device"])
-            self.additional_parameter.setEnabled(True) 
-        
-
+            
     def SendCommand(self):
+
         classe = self.classe.currentText()
         parameter = self.parametro.currentText()
         destination_UID = self.destination_UID.displayText()
@@ -60,12 +71,18 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
     def caixaCommand(self):
         classe = self.classe.currentText()
         parameter = self.parametro.currentText()
+
+        self.clearBoxes() # Zera as caixas de texto antes de escrever qualquer coisa
+
         # Anexa o valor das caixas de texto a 0x para poder converter posteriormente usando o "literal_eval"
         destination_UID = "0x" + self.destination_UID.displayText()
         source_UID = "0x" + self.source_UID.displayText()
         sub_device = "0x" + self.sub_device.displayText()
         port_id = "0x" + self.port_ID.displayText()
-        additional_parameter = "0x" + self.additional_parameter.displayText()
+        # Parametro adicionais que são usados apenas em alguns comandos, e variam dependendo do comando
+        add_param_1 = "0x" + self.add_param_1.displayText()
+        add_param_2 = "0x" + self.add_param_2.displayText()
+        TN = 0 # Até o momento não foi implementado, então coloquei o valor padrão como 0
 
         # Inicializa as caixas de texto caso o valor delas esteja vazio
         if destination_UID == "0x":
@@ -76,79 +93,114 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
             sub_device = "0x0"
         if port_id == "0x":
             port_id = "0x0"
-        if additional_parameter == "0x":
-            additional_parameter = "0x0"
+        if add_param_1 == "0x":
+            add_param_1 = "0x0"
+        if add_param_2 == "0x":
+            add_param_2 = "0x0"
             
         # Converte o valor das caixes de texto de str para int
         destination_UID = literal_eval(destination_UID)
         source_UID = literal_eval(source_UID)
         sub_device = literal_eval(sub_device)
         port_id = literal_eval(port_id)
-        additional_parameter = literal_eval(additional_parameter)
+        add_param_1 = literal_eval(add_param_1)
+        add_param_2 = literal_eval(add_param_2)
 
         # Aproveitando a chamada para atualizar os demais campos que devem ou não ser ativados
         if(classe == "SET"):
             if(parameter == "DMX start address"):
-                command2send = RDM.SET_dmx_start_address(destination_UID, source_UID, 0, port_id, sub_device, additional_parameter)
-                self.additional_parameter.setEnabled(True) 
+                command2send = RDM.SET_dmx_start_address(destination_UID, source_UID, TN, port_id, sub_device, add_param_1)
+                self.add_param_1.setEnabled(True) 
+                self.add_param_2.setEnabled(False)
+                self.add_param_1_label.setText("Endereço DMX")
+                self.add_param_1.setMaxLength(4)
                 self.sub_device.setEnabled(True)
             
             else: # Então é Identify device
-                command2send = RDM.SET_identify_device(destination_UID, source_UID, 0, port_id, sub_device, additional_parameter)
-                self.additional_parameter.setEnabled(True) 
+                command2send = RDM.SET_identify_device(destination_UID, source_UID, TN, port_id, sub_device, add_param_1)
+                self.add_param_1.setEnabled(True)
+                self.add_param_2.setEnabled(False)  
+                self.add_param_1_label.setText("Stop/Start (0/1)")
+                self.add_param_1.setMaxLength(1)
                 self.sub_device.setEnabled(True)
         
         elif(classe == "GET"):
             if(parameter == "Supported parameters"):
-                command2send = RDM.GET_supported_parameters(destination_UID, source_UID, 0, port_id, sub_device)
-                self.additional_parameter.setEnabled(False) 
+                command2send = RDM.GET_supported_parameters(destination_UID, source_UID, TN, port_id, sub_device)
+                self.add_param_1.setEnabled(False) 
+                self.add_param_2.setEnabled(False)
+                self.clearAddParam()
                 self.sub_device.setEnabled(True)
 
             elif(parameter == "Parameter description"):
-                command2send = RDM.GET_parameter_description(destination_UID, source_UID, 0, port_id, additional_parameter)
-                self.additional_parameter.setEnabled(True) 
+                command2send = RDM.GET_parameter_description(destination_UID, source_UID, TN, port_id, add_param_1)
+                self.add_param_1.setEnabled(True) 
+                self.add_param_2.setEnabled(False)
+                self.add_param_1_label.setText("PID")
+                self.add_param_1.setMaxLength(4)
                 self.sub_device.setEnabled(False)
+                self.sub_device.setText("")
 
             elif(parameter == "Device info"):
-                command2send = RDM.GET_device_info(destination_UID, source_UID, 0, port_id, sub_device)
-                self.additional_parameter.setEnabled(False) 
+                command2send = RDM.GET_device_info(destination_UID, source_UID, TN, port_id, sub_device)
+                self.add_param_1.setEnabled(False)
+                self.add_param_2.setEnabled(False)
+                self.clearAddParam() 
                 self.sub_device.setEnabled(True)
 
             elif(parameter == "Software version label"):
-                command2send = RDM.GET_software_version_label(destination_UID, source_UID, 0, port_id, sub_device)
-                self.additional_parameter.setEnabled(False) 
+                command2send = RDM.GET_software_version_label(destination_UID, source_UID, TN, port_id, sub_device)
+                self.add_param_1.setEnabled(False)
+                self.add_param_2.setEnabled(False)
+                self.clearAddParam()   
                 self.sub_device.setEnabled(True)
 
             elif(parameter == "DMX start address"):
-                command2send = RDM.GET_dmx_start_address(destination_UID, source_UID, 0, port_id, sub_device)
-                self.additional_parameter.setEnabled(False) 
+                command2send = RDM.GET_dmx_start_address(destination_UID, source_UID, TN, port_id, sub_device)
+                self.add_param_1.setEnabled(False) 
+                self.add_param_2.setEnabled(False)
+                self.clearAddParam()  
                 self.sub_device.setEnabled(True)
 
             else:                       #(parameter == "Identify device"):
-                command2send = RDM.GET_identify_device(destination_UID, source_UID, 0, port_id, sub_device)
-                self.additional_parameter.setEnabled(False) 
+                command2send = RDM.GET_identify_device(destination_UID, source_UID, TN, port_id, sub_device)
+                self.add_param_1.setEnabled(False)
+                self.add_param_2.setEnabled(False) 
+                self.clearAddParam()  
                 self.sub_device.setEnabled(True)
         
         else:   # Classe DISC
             if(parameter == "Unique Branch"):
-                command2send = RDM.DISC_unique_branch(destination_UID, source_UID, 0, port_id, additional_parameter)
-                self.additional_parameter.setEnabled(True) 
+                command2send = RDM.DISC_unique_branch(destination_UID, source_UID, TN, port_id, add_param_1, add_param_2)
+                self.add_param_1.setEnabled(True) 
+                self.add_param_2.setEnabled(True)
+                self.add_param_1_label.setText("LB ID")
+                self.add_param_2_label.setText("UB ID")  
+                self.add_param_1.setMaxLength(12) # Define o limite de caracteres a serem digitados
+                self.add_param_2.setMaxLength(12)
                 self.sub_device.setEnabled(False)
+                self.sub_device.setText("")
 
             elif(parameter == "Mute"):
-                command2send = RDM.DISC_mute(destination_UID, source_UID, 0, port_id)
-                self.additional_parameter.setEnabled(False) 
+                command2send = RDM.DISC_mute(destination_UID, source_UID, TN, port_id)
+                self.add_param_1.setEnabled(False)
+                self.add_param_2.setEnabled(False)
+                self.clearAddParam()   
                 self.sub_device.setEnabled(False)
+                self.sub_device.setText("")
 
             else:                       # (parameter == "Unmute"):
-                command2send = RDM.DISC_un_mute(destination_UID, source_UID, 0, port_id)
-                self.additional_parameter.setEnabled(False) 
+                command2send = RDM.DISC_un_mute(destination_UID, source_UID, TN, port_id)
+                self.add_param_1.setEnabled(False) 
+                self.add_param_2.setEnabled(False)
+                self.clearAddParam()
                 self.sub_device.setEnabled(False)
+                self.sub_device.setText("")
 
         #self.slave_Response.setText(command2send)
         
         command_len = command2send[2] + 2 # Incluir caixa de texto para mostrar o tamanho do frame
-        print(command_len)
+        self.frame_size.setText(str(command_len))
 
         # Incluir caixa de texto extra para parametro adicional. O Disc unic branch precisa de dois
 
@@ -197,3 +249,70 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
             self.command_37.setText(hex(command2send[36])[2:])
             self.command_38.setText(hex(command2send[37])[2:])
 
+    def clearBoxes(self):
+        self.command_25.setText(" ")
+        self.command_26.setText(" ")
+        self.command_27.setText(" ")
+        self.command_28.setText(" ")
+        self.command_29.setText(" ")
+        self.command_30.setText(" ")
+        self.command_31.setText(" ")
+        self.command_32.setText(" ")
+        self.command_33.setText(" ")
+        self.command_34.setText(" ")
+        self.command_35.setText(" ")
+        self.command_36.setText(" ")
+        self.command_37.setText(" ")
+        self.command_38.setText(" ")
+
+    def clearAddParam(self):
+        self.add_param_1.setText("")
+        self.add_param_2.setText("")
+        self.add_param_1_label.setText(" ")
+        self.add_param_2_label.setText(" ")
+    
+    def alignement_labels(self):
+        # Alinha as caixas de comando ao centro
+        self.add_param_1_label.setAlignment(Qt.AlignRight)
+        self.add_param_2_label.setAlignment(Qt.AlignRight)
+
+        self.command_1.setAlignment(Qt.AlignCenter)
+        self.command_2.setAlignment(Qt.AlignCenter)
+        self.command_3.setAlignment(Qt.AlignCenter)
+        self.command_4.setAlignment(Qt.AlignCenter)
+        self.command_5.setAlignment(Qt.AlignCenter)
+        self.command_6.setAlignment(Qt.AlignCenter)
+        self.command_7.setAlignment(Qt.AlignCenter)
+        self.command_8.setAlignment(Qt.AlignCenter)
+        self.command_9.setAlignment(Qt.AlignCenter)
+        self.command_10.setAlignment(Qt.AlignCenter)
+        self.command_11.setAlignment(Qt.AlignCenter)
+        self.command_12.setAlignment(Qt.AlignCenter)
+        self.command_13.setAlignment(Qt.AlignCenter)
+        self.command_14.setAlignment(Qt.AlignCenter)
+        self.command_15.setAlignment(Qt.AlignCenter)
+        self.command_16.setAlignment(Qt.AlignCenter)
+        self.command_17.setAlignment(Qt.AlignCenter)
+        self.command_18.setAlignment(Qt.AlignCenter)
+        self.command_19.setAlignment(Qt.AlignCenter)
+        self.command_20.setAlignment(Qt.AlignCenter)
+        self.command_21.setAlignment(Qt.AlignCenter)
+        self.command_22.setAlignment(Qt.AlignCenter)
+        self.command_23.setAlignment(Qt.AlignCenter)
+        self.command_24.setAlignment(Qt.AlignCenter)
+        self.command_25.setAlignment(Qt.AlignCenter)
+        self.command_26.setAlignment(Qt.AlignCenter)
+        self.command_27.setAlignment(Qt.AlignCenter)
+        self.command_28.setAlignment(Qt.AlignCenter)
+        self.command_29.setAlignment(Qt.AlignCenter)
+        self.command_30.setAlignment(Qt.AlignCenter)
+        self.command_31.setAlignment(Qt.AlignCenter)
+        self.command_32.setAlignment(Qt.AlignCenter)
+        self.command_33.setAlignment(Qt.AlignCenter)
+        self.command_34.setAlignment(Qt.AlignCenter)
+        self.command_35.setAlignment(Qt.AlignCenter)
+        self.command_36.setAlignment(Qt.AlignCenter)
+        self.command_37.setAlignment(Qt.AlignCenter)
+        self.command_38.setAlignment(Qt.AlignCenter)
+        self.command_39.setAlignment(Qt.AlignCenter)
+        self.command_40.setAlignment(Qt.AlignCenter)
