@@ -4,12 +4,20 @@ from RDM_DMX_Master_ui import Ui_MainWindow
 import RDM
 from ast import literal_eval
 
+Flag_just_once = True
+
 class RDM_DMX_Master(QWidget, Ui_MainWindow):
     def __init__(self, app):
         super().__init__()
         self.setupUi(self)
         self.app = app
         self.setWindowTitle("RDM DMX Master")
+
+        # Executa os camandos abaixo apenas na inicialização do app
+        global Flag_just_once
+        if Flag_just_once:
+            Flag_just_once = False
+            self.caixaCommand()
 
         self.classe.activated.connect(self.ChangeParameter)
         self.classe.activated.connect(self.caixaCommand)
@@ -31,6 +39,10 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.destination_UID.setMaxLength(12)
         self.port_ID.setMaxLength(2)
         self.sub_device.setMaxLength(4) # É preciso especificar o range deste em cada comando
+
+        self.port_ID.setPlaceholderText("01 - FF")
+        self.source_UID.setPlaceholderText("0 - FFFFFFFFFFFF")
+        self.destination_UID.setPlaceholderText("0 - FFFFFFFFFFFF")
 
         self.alignement_labels() # Alinha as caixas de comando ao centro
 
@@ -61,7 +73,6 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         sub_device = self.sub_device.displayText()
         port_id = self.port_ID.displayText()
         
-        print(port_id)
         self.slave_Response.setText(source_UID)
         # Modo de escrever texto
 
@@ -113,6 +124,9 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 self.add_param_1.setEnabled(True) 
                 self.add_param_2.setEnabled(False)
                 self.add_param_1_label.setText("Endereço DMX")
+                self.add_param_1.setPlaceholderText("1 - 200")
+                self.sub_device.setPlaceholderText("0 - 0200 ou FFFF")
+
                 self.add_param_1.setMaxLength(4)
                 self.sub_device.setEnabled(True)
             
@@ -122,6 +136,9 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 self.add_param_2.setEnabled(False)  
                 self.add_param_1_label.setText("Stop/Start (0/1)")
                 self.add_param_1.setMaxLength(1)
+                self.add_param_1.setPlaceholderText("0 ou 1")
+                self.sub_device.setPlaceholderText("0 - 0200 ou FFFF")
+
                 self.sub_device.setEnabled(True)
         
         elif(classe == "GET"):
@@ -130,6 +147,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 self.add_param_1.setEnabled(False) 
                 self.add_param_2.setEnabled(False)
                 self.clearAddParam()
+                self.sub_device.setPlaceholderText("0 - 0200")
                 self.sub_device.setEnabled(True)
 
             elif(parameter == "Parameter description"):
@@ -137,8 +155,10 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 self.add_param_1.setEnabled(True) 
                 self.add_param_2.setEnabled(False)
                 self.add_param_1_label.setText("PID")
+                self.add_param_1.setPlaceholderText("8000 - FFDF")
                 self.add_param_1.setMaxLength(4)
                 self.sub_device.setEnabled(False)
+                self.sub_device.setPlaceholderText("")
                 self.sub_device.setText("")
 
             elif(parameter == "Device info"):
@@ -146,6 +166,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 self.add_param_1.setEnabled(False)
                 self.add_param_2.setEnabled(False)
                 self.clearAddParam() 
+                self.sub_device.setPlaceholderText("0 - 0200")
                 self.sub_device.setEnabled(True)
 
             elif(parameter == "Software version label"):
@@ -153,6 +174,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 self.add_param_1.setEnabled(False)
                 self.add_param_2.setEnabled(False)
                 self.clearAddParam()   
+                self.sub_device.setPlaceholderText("0 - 0200")
                 self.sub_device.setEnabled(True)
 
             elif(parameter == "DMX start address"):
@@ -160,6 +182,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 self.add_param_1.setEnabled(False) 
                 self.add_param_2.setEnabled(False)
                 self.clearAddParam()  
+                self.sub_device.setPlaceholderText("0 - 0200")
                 self.sub_device.setEnabled(True)
 
             else:                       #(parameter == "Identify device"):
@@ -167,6 +190,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 self.add_param_1.setEnabled(False)
                 self.add_param_2.setEnabled(False) 
                 self.clearAddParam()  
+                self.sub_device.setPlaceholderText("0 - 0200")
                 self.sub_device.setEnabled(True)
         
         else:   # Classe DISC
@@ -175,11 +199,14 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 self.add_param_1.setEnabled(True) 
                 self.add_param_2.setEnabled(True)
                 self.add_param_1_label.setText("LB ID")
-                self.add_param_2_label.setText("UB ID")  
+                self.add_param_2_label.setText("UB ID")
+                self.add_param_1.setPlaceholderText("0 - FFFFFFFFFFFF")
+                self.add_param_2.setPlaceholderText("0 - FFFFFFFFFFFF")  
                 self.add_param_1.setMaxLength(12) # Define o limite de caracteres a serem digitados
                 self.add_param_2.setMaxLength(12)
                 self.sub_device.setEnabled(False)
                 self.sub_device.setText("")
+                self.sub_device.setPlaceholderText("")
 
             elif(parameter == "Mute"):
                 command2send = RDM.DISC_mute(destination_UID, source_UID, TN, port_id)
@@ -188,6 +215,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 self.clearAddParam()   
                 self.sub_device.setEnabled(False)
                 self.sub_device.setText("")
+                self.sub_device.setPlaceholderText("")
 
             else:                       # (parameter == "Unmute"):
                 command2send = RDM.DISC_un_mute(destination_UID, source_UID, TN, port_id)
@@ -196,6 +224,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 self.clearAddParam()
                 self.sub_device.setEnabled(False)
                 self.sub_device.setText("")
+                self.sub_device.setPlaceholderText("")
 
         #self.slave_Response.setText(command2send)
         
@@ -270,6 +299,8 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.add_param_2.setText("")
         self.add_param_1_label.setText(" ")
         self.add_param_2_label.setText(" ")
+        self.add_param_1.setPlaceholderText("")
+        self.add_param_2.setPlaceholderText("")
     
     def alignement_labels(self):
         # Alinha as caixas de comando ao centro
