@@ -6,6 +6,10 @@ def Calc_checksum(frame_size, frame):
     soma = 0
     for i in range(frame_size):
         soma = soma + frame[i]
+    #print(soma)   
+    #print((soma >> 8) & 0xff)
+    #print((soma & 0xff))
+
     return soma
 
 def Set_frame(UID_D, UID_S, TN, Message_Length, Port_ID, Message_Count, Sub_Device, CC, PID, PDL, LB_PD, UB_PD):

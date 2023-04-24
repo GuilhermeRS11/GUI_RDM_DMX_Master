@@ -1,10 +1,14 @@
 from PySide6.QtWidgets import QWidget
 from PySide6.QtCore import Qt
 from RDM_DMX_Master_ui import Ui_MainWindow
-import RDM
 from ast import literal_eval
 
+import RDM
+import serial
+
 Flag_just_once = True
+serialPort = serial.Serial(port = "COM7", baudrate=9600,
+                           bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
 class RDM_DMX_Master(QWidget, Ui_MainWindow):
     def __init__(self, app):
@@ -72,9 +76,10 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         source_UID = self.source_UID.displayText()
         sub_device = self.sub_device.displayText()
         port_id = self.port_ID.displayText()
-        
-        self.slave_Response.setText(source_UID)
-        # Modo de escrever texto
+               
+        #serialPort.write("53".encode('Ascii'))
+        #receive = serialPort.read()
+        #print(receive.decode('Ascii'))
 
     def quit(self):
         self.app.quit()
@@ -235,6 +240,8 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
 
         # Separa cada byte do comando a ser enviado em cada caixa de texto correspondente
         self.command_1.setText(hex(command2send[0])[2:])
+        if self.send_command.clicked:
+            serialPort.write(hex(command2send[0])[2:].encode('Ascii'))
         self.command_2.setText(hex(command2send[1])[2:])
         self.command_3.setText(hex(command2send[2])[2:])
         self.command_4.setText(hex(command2send[3])[2:])
@@ -276,6 +283,8 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
             self.command_35.setText(hex(command2send[34])[2:])
             self.command_36.setText(hex(command2send[35])[2:])
             self.command_37.setText(hex(command2send[36])[2:])
+            print(command2send[36])
+            print(command2send[37])
             self.command_38.setText(hex(command2send[37])[2:])
 
     def clearBoxes(self):
