@@ -10,6 +10,9 @@ Flag_just_once = True
 serialPort = serial.Serial(port = "COM7", baudrate=9600,
                            bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
+# Inicializa parametro que sera compartilhado entre as funcoes
+command2send = []
+
 class RDM_DMX_Master(QWidget, Ui_MainWindow):
     def __init__(self, app):
         super().__init__()
@@ -67,24 +70,14 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         else:   # Então é comando SET
             self.parametro.clear()
             self.parametro.addItems(["DMX start address","Identify device"])
-            
-    def SendCommand(self):
-
-        classe = self.classe.currentText()
-        parameter = self.parametro.currentText()
-        destination_UID = self.destination_UID.displayText()
-        source_UID = self.source_UID.displayText()
-        sub_device = self.sub_device.displayText()
-        port_id = self.port_ID.displayText()
-               
-        #serialPort.write("53".encode('Ascii'))
-        #receive = serialPort.read()
-        #print(receive.decode('Ascii'))
 
     def quit(self):
+        serialPort.close()
         self.app.quit()
 
     def caixaCommand(self):
+        global command2send
+
         classe = self.classe.currentText()
         parameter = self.parametro.currentText()
 
@@ -240,8 +233,6 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
 
         # Separa cada byte do comando a ser enviado em cada caixa de texto correspondente
         self.command_1.setText(hex(command2send[0])[2:])
-        if self.send_command.clicked:
-            serialPort.write(hex(command2send[0])[2:].encode('Ascii'))
         self.command_2.setText(hex(command2send[1])[2:])
         self.command_3.setText(hex(command2send[2])[2:])
         self.command_4.setText(hex(command2send[3])[2:])
@@ -283,8 +274,6 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
             self.command_35.setText(hex(command2send[34])[2:])
             self.command_36.setText(hex(command2send[35])[2:])
             self.command_37.setText(hex(command2send[36])[2:])
-            print(command2send[36])
-            print(command2send[37])
             self.command_38.setText(hex(command2send[37])[2:])
 
     def clearBoxes(self):
@@ -302,6 +291,17 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.command_36.setText(" ")
         self.command_37.setText(" ")
         self.command_38.setText(" ")
+
+    def SendCommand(self):
+        global command2send
+
+        # Envia os dados via serial byte a byte
+        for i in range(command2send[2] + 2):
+            serialPort.write(hex(command2send[i])[2:].encode('Ascii'))
+            
+        receive = serialPort.read()
+        print(receive.decode('Ascii'))
+        #serialPort.close()
 
     def clearAddParam(self):
         self.add_param_1.setText("")
