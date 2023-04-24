@@ -7,9 +7,12 @@ serialPort = serial.Serial(port = "COM7", baudrate=9600,
    
 # Read line   
 while True:
-    serialPort.write("Hello World!!!".encode('Ascii'))
-    receive = serialPort.read()
-    print(receive.decode('Ascii'))
+    serialPort.write(0x12, 0, 1)
+
+    #serialPort.write(12)
+
+    #receive = serialPort.read()
+    #print(receive.decode('Ascii'))
     #time.sleep(1)
 
     if keyboard.is_pressed('q'):
