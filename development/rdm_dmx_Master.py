@@ -7,11 +7,10 @@ import RDM_backend as RDM
 import serial
 
 Flag_just_once = True
-serialPort = serial.Serial(port = "COM7", baudrate=250000,
-                           bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
 # Inicializa parametro que sera compartilhado entre as funcoes
 command2send = []
+serialComunication = serial.Serial(baudrate=250000, bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
 class RDM_DMX_Master(QWidget, Ui_MainWindow):
     def __init__(self, app):
@@ -20,12 +19,20 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.app = app
         self.setWindowTitle("RDM DMX Master")
 
+        """ 
+        #############################################################################################
+                              Inicializacao de parametros para RDM_frontend
+        #############################################################################################
+        """
+
         # Executa os camandos abaixo apenas na inicialização do app
         global Flag_just_once
         if Flag_just_once:
             Flag_just_once = False
-            self.caixaCommand()
+            self.serialFindPorts()      # Faz a primeira busca pelas portas serial do sistema
+            self.caixaCommand()         # Atualiza os campos de exibicao com os valores zerados
 
+        # Identifica a ação dos principais elementos graficos
         self.classe.activated.connect(self.ChangeParameter)
         self.classe.activated.connect(self.caixaCommand)
         self.parametro.activated.connect(self.clearAddParam)
@@ -53,7 +60,33 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
 
         self.alignement_labels() # Alinha as caixas de comando ao centro
 
+        # Inicia comunicação serial e set a porta
+        #self.serialPort.activated.connect(self.serialFindPorts)
+
+
+        """ 
+        #############################################################################################
+                                Inicializacao de parametros para DMX_frontend
+        #############################################################################################
+        """
+
+        self.white_dmx_box.valueChanged.connect(self.whiteBox)
+        self.white_dmx_slider.valueChanged.connect(self.whiteSlider)
+        self.blue_dmx_box.valueChanged.connect(self.blueBox)
+        self.blue_dmx_slider.valueChanged.connect(self.blueSlider)
+        self.red_dmx_box.valueChanged.connect(self.redBox)
+        self.red_dmx_slider.valueChanged.connect(self.redSlider)
+        self.green_dmx_box.valueChanged.connect(self.greenBox)
+        self.green_dmx_slider.valueChanged.connect(self.greenSlider)
+        self.RGB_dmx_slider.valueChanged.connect(self.rgbSlider)
+
         
+    """ 
+    #############################################################################################
+                                            RDM_frontend
+    #############################################################################################
+    """
+
     def ChangeParameter(self):
         classe = self.classe.currentText()
         self.clearAddParam() # Zera as caixas dos parametros extras
@@ -72,7 +105,8 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
             self.parametro.addItems(["DMX start address","Identify device"])
 
     def quit(self):
-        serialPort.close()
+        global serialComunication
+        serialComunication.close()
         self.app.quit()
 
     def caixaCommand(self):
@@ -294,14 +328,19 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
 
     def SendCommand(self):
         global command2send
+        global serialComunication
+        
+        serialComunication.close()
+        serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
+                           bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
         # Envia os dados via serial byte a byte
         for i in range(command2send[2] + 2):
-            serialPort.write(f"{command2send[i]:0{2}X}".encode('Ascii'))
+            serialComunication.write(f"{command2send[i]:0{2}X}".encode('Ascii'))
             
-        receive = serialPort.read()
-        print(receive.decode('Ascii'))
-        #serialPort.close()
+        #receive = serialComunication.read()
+        #print(receive.decode('Ascii'))
+        serialComunication.close()
 
     def clearAddParam(self):
         self.add_param_1.setText("")
@@ -356,3 +395,72 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.command_38.setAlignment(Qt.AlignCenter)
         self.command_39.setAlignment(Qt.AlignCenter)
         self.command_40.setAlignment(Qt.AlignCenter)
+
+    def serialFindPorts(self):
+        ports = ['COM%s' % (i + 1) for i in range(256)]
+        result = []
+        for port in ports:
+            try:
+                s = serial.Serial(port)
+                s.close()
+                result.append(port)                 # Coloca as portas encontradas em uma lista
+            except (OSError, serial.SerialException):
+                pass
+            
+        self.serialPort.clear()
+        self.serialPort.addItems(result)    # Cria os itens da box com a lista      
+                
+    """ 
+    #############################################################################################
+                                            DMX_frontend
+    #############################################################################################
+    """
+
+    def whiteSlider(self):
+        self.white_dmx_box.setValue(self.white_dmx_slider.value())
+
+    def whiteBox(self):
+        self.white_dmx_slider.setValue(self.white_dmx_box.value())
+
+    def blueSlider(self):
+        self.blue_dmx_box.setValue(self.blue_dmx_slider.value())
+
+    def blueBox(self):
+        self.blue_dmx_slider.setValue(self.blue_dmx_box.value())
+
+    def redSlider(self):
+        self.red_dmx_box.setValue(self.red_dmx_slider.value())
+
+    def redBox(self):
+        self.red_dmx_slider.setValue(self.red_dmx_box.value())
+
+    def greenSlider(self):
+        self.green_dmx_box.setValue(self.green_dmx_slider.value())
+
+    def greenBox(self):
+        self.green_dmx_slider.setValue(self.green_dmx_box.value())
+
+    def rgbSlider(self):
+        #blue = self.blue_dmx_box.value()
+        #red = self.red_dmx_box.value()
+        #green = self.green_dmx_box.value()
+        rgb = self.RGB_dmx_slider.value()
+
+        if rgb < 255:
+            red = 255 - rgb 
+            blue = 0
+            green = rgb
+
+        elif rgb < 511:
+            red = 0
+            blue = rgb - 255
+            green = 511 - rgb
+
+        else:
+            red = rgb - 511
+            blue = 767 - rgb
+            green = 0
+
+        self.red_dmx_slider.setValue(red)
+        self.blue_dmx_slider.setValue(blue)
+        self.green_dmx_slider.setValue(green)

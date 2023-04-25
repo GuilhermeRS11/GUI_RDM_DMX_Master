@@ -69,7 +69,7 @@
       <property name="geometry">
        <rect>
         <x>230</x>
-        <y>460</y>
+        <y>480</y>
         <width>121</width>
         <height>20</height>
        </rect>
@@ -181,9 +181,9 @@
       <property name="geometry">
        <rect>
         <x>10</x>
-        <y>490</y>
+        <y>510</y>
         <width>561</width>
-        <height>51</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="autoFillBackground">
@@ -346,9 +346,9 @@
       <property name="geometry">
        <rect>
         <x>230</x>
-        <y>435</y>
+        <y>445</y>
         <width>106</width>
-        <height>24</height>
+        <height>31</height>
        </rect>
       </property>
       <property name="text">
@@ -2194,17 +2194,17 @@
       <property name="geometry">
        <rect>
         <x>150</x>
-        <y>435</y>
+        <y>450</y>
         <width>68</width>
-        <height>22</height>
+        <height>21</height>
        </rect>
       </property>
      </widget>
      <widget class="QLabel" name="label_6">
       <property name="geometry">
        <rect>
-        <x>85</x>
-        <y>435</y>
+        <x>75</x>
+        <y>450</y>
         <width>61</width>
         <height>21</height>
        </rect>
@@ -2237,21 +2237,24 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Verde&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QSpinBox" name="spinBox_2">
+     <widget class="QSpinBox" name="blue_dmx_box">
       <property name="geometry">
        <rect>
         <x>390</x>
         <y>170</y>
-        <width>41</width>
+        <width>46</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="maximum">
+       <number>255</number>
       </property>
      </widget>
      <widget class="QPushButton" name="send_command_dmx">
       <property name="geometry">
        <rect>
         <x>230</x>
-        <y>420</y>
+        <y>465</y>
         <width>121</width>
         <height>24</height>
        </rect>
@@ -2265,9 +2268,12 @@
        <rect>
         <x>390</x>
         <y>255</y>
-        <width>41</width>
+        <width>46</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="maximum">
+       <number>255</number>
       </property>
      </widget>
      <widget class="QSpinBox" name="red_dmx_box">
@@ -2275,12 +2281,15 @@
        <rect>
         <x>165</x>
         <y>250</y>
-        <width>41</width>
+        <width>46</width>
         <height>22</height>
        </rect>
       </property>
+      <property name="maximum">
+       <number>255</number>
+      </property>
      </widget>
-     <widget class="QLabel" name="blue_dmx_box">
+     <widget class="QLabel" name="label_7">
       <property name="geometry">
        <rect>
         <x>335</x>
@@ -2389,9 +2398,12 @@
        <rect>
         <x>165</x>
         <y>170</y>
-        <width>41</width>
+        <width>46</width>
         <height>22</height>
        </rect>
+      </property>
+      <property name="maximum">
+       <number>255</number>
       </property>
      </widget>
      <widget class="QLabel" name="label_19">
@@ -2524,7 +2536,7 @@
        <enum>Qt::Vertical</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="RGBW_dmx_slider">
+     <widget class="QSlider" name="RGB_dmx_slider">
       <property name="geometry">
        <rect>
         <x>55</x>
@@ -2555,7 +2567,7 @@ QSlider::groove:horizontal
 }</string>
       </property>
       <property name="maximum">
-       <number>255</number>
+       <number>768</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -2571,7 +2583,7 @@ QSlider::groove:horizontal
       <property name="geometry">
        <rect>
         <x>220</x>
-        <y>455</y>
+        <y>500</y>
         <width>151</width>
         <height>26</height>
        </rect>
