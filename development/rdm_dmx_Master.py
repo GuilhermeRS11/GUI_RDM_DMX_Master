@@ -3,11 +3,11 @@ from PySide6.QtCore import Qt
 from RDM_DMX_Master_ui import Ui_MainWindow
 from ast import literal_eval
 
-import RDM
+import RDM_backend as RDM
 import serial
 
 Flag_just_once = True
-serialPort = serial.Serial(port = "COM7", baudrate=9600,
+serialPort = serial.Serial(port = "COM7", baudrate=250000,
                            bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
 # Inicializa parametro que sera compartilhado entre as funcoes
@@ -232,49 +232,49 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         # Incluir caixa de texto extra para parametro adicional. O Disc unic branch precisa de dois
 
         # Separa cada byte do comando a ser enviado em cada caixa de texto correspondente
-        self.command_1.setText(hex(command2send[0])[2:])
-        self.command_2.setText(hex(command2send[1])[2:])
-        self.command_3.setText(hex(command2send[2])[2:])
-        self.command_4.setText(hex(command2send[3])[2:])
-        self.command_5.setText(hex(command2send[4])[2:])
-        self.command_6.setText(hex(command2send[5])[2:])
-        self.command_7.setText(hex(command2send[6])[2:])
-        self.command_8.setText(hex(command2send[7])[2:])
-        self.command_9.setText(hex(command2send[8])[2:])
-        self.command_10.setText(hex(command2send[9])[2:])
-        self.command_11.setText(hex(command2send[10])[2:])
-        self.command_12.setText(hex(command2send[11])[2:])
-        self.command_13.setText(hex(command2send[12])[2:])
-        self.command_14.setText(hex(command2send[13])[2:])
-        self.command_15.setText(hex(command2send[14])[2:])
-        self.command_16.setText(hex(command2send[15])[2:])
-        self.command_17.setText(hex(command2send[16])[2:])
-        self.command_18.setText(hex(command2send[17])[2:])
-        self.command_19.setText(hex(command2send[18])[2:])
-        self.command_20.setText(hex(command2send[19])[2:])
-        self.command_21.setText(hex(command2send[20])[2:])
-        self.command_22.setText(hex(command2send[21])[2:])
-        self.command_23.setText(hex(command2send[22])[2:])
-        self.command_24.setText(hex(command2send[23])[2:])
+        self.command_1.setText(f"{command2send[0]:0{2}X}")
+        self.command_2.setText(f"{command2send[1]:0{2}X}")
+        self.command_3.setText(f"{command2send[2]:0{2}X}")
+        self.command_4.setText(f"{command2send[3]:0{2}X}")
+        self.command_5.setText(f"{command2send[4]:0{2}X}")
+        self.command_6.setText(f"{command2send[5]:0{2}X}")
+        self.command_7.setText(f"{command2send[6]:0{2}X}")
+        self.command_8.setText(f"{command2send[7]:0{2}X}")
+        self.command_9.setText(f"{command2send[8]:0{2}X}")
+        self.command_10.setText(f"{command2send[9]:0{2}X}")
+        self.command_11.setText(f"{command2send[10]:0{2}X}")
+        self.command_12.setText(f"{command2send[11]:0{2}X}")
+        self.command_13.setText(f"{command2send[12]:0{2}X}")
+        self.command_14.setText(f"{command2send[13]:0{2}X}")
+        self.command_15.setText(f"{command2send[14]:0{2}X}")
+        self.command_16.setText(f"{command2send[15]:0{2}X}")
+        self.command_17.setText(f"{command2send[16]:0{2}X}")
+        self.command_18.setText(f"{command2send[17]:0{2}X}")
+        self.command_19.setText(f"{command2send[18]:0{2}X}")
+        self.command_20.setText(f"{command2send[19]:0{2}X}")
+        self.command_21.setText(f"{command2send[20]:0{2}X}")
+        self.command_22.setText(f"{command2send[21]:0{2}X}")
+        self.command_23.setText(f"{command2send[22]:0{2}X}")
+        self.command_24.setText(f"{command2send[23]:0{2}X}")
         if command_len > 24:
-            self.command_25.setText(hex(command2send[24])[2:])
+            self.command_25.setText(f"{command2send[24]:0{2}X}")
         if command_len > 25:
-            self.command_26.setText(hex(command2send[25])[2:])
+            self.command_26.setText(f"{command2send[25]:0{2}X}")
         if command_len > 26:
-            self.command_27.setText(hex(command2send[26])[2:])
+            self.command_27.setText(f"{command2send[26]:0{2}X}")
         if command_len > 27:
-            self.command_28.setText(hex(command2send[27])[2:])
+            self.command_28.setText(f"{command2send[27]:0{2}X}")
         if command_len > 28:
-            self.command_29.setText(hex(command2send[28])[2:])
-            self.command_30.setText(hex(command2send[29])[2:])
-            self.command_31.setText(hex(command2send[30])[2:])
-            self.command_32.setText(hex(command2send[31])[2:])
-            self.command_33.setText(hex(command2send[32])[2:])
-            self.command_34.setText(hex(command2send[33])[2:])
-            self.command_35.setText(hex(command2send[34])[2:])
-            self.command_36.setText(hex(command2send[35])[2:])
-            self.command_37.setText(hex(command2send[36])[2:])
-            self.command_38.setText(hex(command2send[37])[2:])
+            self.command_29.setText(f"{command2send[28]:0{2}X}")
+            self.command_30.setText(f"{command2send[29]:0{2}X}")
+            self.command_31.setText(f"{command2send[30]:0{2}X}")
+            self.command_32.setText(f"{command2send[31]:0{2}X}")
+            self.command_33.setText(f"{command2send[32]:0{2}X}")
+            self.command_34.setText(f"{command2send[33]:0{2}X}")
+            self.command_35.setText(f"{command2send[34]:0{2}X}")
+            self.command_36.setText(f"{command2send[35]:0{2}X}")
+            self.command_37.setText(f"{command2send[36]:0{2}X}")
+            self.command_38.setText(f"{command2send[37]:0{2}X}")
 
     def clearBoxes(self):
         self.command_25.setText(" ")
@@ -297,7 +297,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
 
         # Envia os dados via serial byte a byte
         for i in range(command2send[2] + 2):
-            serialPort.write(hex(command2send[i])[2:].encode('Ascii'))
+            serialPort.write(f"{command2send[i]:0{2}X}".encode('Ascii'))
             
         receive = serialPort.read()
         print(receive.decode('Ascii'))

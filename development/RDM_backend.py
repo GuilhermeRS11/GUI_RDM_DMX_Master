@@ -1,4 +1,3 @@
-
 import rdm_define as rdm
 import sys
 

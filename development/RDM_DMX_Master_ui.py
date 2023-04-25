@@ -16,10 +16,10 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QComboBox, QLabel, QLineEdit,
-    QMainWindow, QMenu, QMenuBar, QPushButton,
-    QSizePolicy, QSlider, QSpinBox, QStatusBar,
-    QTabWidget, QWidget)
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QLabel,
+    QLineEdit, QMainWindow, QMenu, QMenuBar,
+    QPushButton, QSizePolicy, QSlider, QSpinBox,
+    QStatusBar, QTabWidget, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -120,7 +120,7 @@ class Ui_MainWindow(object):
         self.label.setGeometry(QRect(190, 50, 49, 16))
         self.send_command = QPushButton(self.RDM_tab)
         self.send_command.setObjectName(u"send_command")
-        self.send_command.setGeometry(QRect(220, 430, 131, 24))
+        self.send_command.setGeometry(QRect(230, 435, 106, 24))
         self.Portid_label = QLabel(self.RDM_tab)
         self.Portid_label.setObjectName(u"Portid_label")
         self.Portid_label.setGeometry(QRect(70, 160, 51, 20))
@@ -586,6 +586,12 @@ class Ui_MainWindow(object):
         self.label_62 = QLabel(self.RDM_tab)
         self.label_62.setObjectName(u"label_62")
         self.label_62.setGeometry(QRect(530, 410, 21, 16))
+        self.serialPort = QComboBox(self.RDM_tab)
+        self.serialPort.setObjectName(u"serialPort")
+        self.serialPort.setGeometry(QRect(150, 435, 68, 22))
+        self.label_6 = QLabel(self.RDM_tab)
+        self.label_6.setObjectName(u"label_6")
+        self.label_6.setGeometry(QRect(85, 435, 61, 21))
         self.tabWidget.addTab(self.RDM_tab, "")
         self.DMX_tab = QWidget()
         self.DMX_tab.setObjectName(u"DMX_tab")
@@ -641,30 +647,89 @@ class Ui_MainWindow(object):
         self.white_dmx_slider = QSlider(self.DMX_tab)
         self.white_dmx_slider.setObjectName(u"white_dmx_slider")
         self.white_dmx_slider.setGeometry(QRect(225, 155, 18, 51))
+        self.white_dmx_slider.setStyleSheet(u"QSlider::handle:vertical{\n"
+"	height: 4px;\n"
+"	background-color: rgb(255, 255, 255);\n"
+" 	margin: 1px; /* expand outside the groove */\n"
+"	border-radius: 4px;\n"
+"	border: 1px solid black;\n"
+"	width: 8px;\n"
+"}\n"
+"")
+        self.white_dmx_slider.setMaximum(255)
         self.white_dmx_slider.setOrientation(Qt.Vertical)
         self.green_dmx_slider = QSlider(self.DMX_tab)
         self.green_dmx_slider.setObjectName(u"green_dmx_slider")
         self.green_dmx_slider.setGeometry(QRect(450, 240, 18, 51))
+        self.green_dmx_slider.setStyleSheet(u"QSlider::handle:vertical{\n"
+"	height: 4px;\n"
+"	background-color: rgb(0, 255, 0);\n"
+" 	margin: 1px; /* expand outside the groove */\n"
+"	border-radius: 4px;\n"
+"	border: 1px solid black;\n"
+"	width: 8px;\n"
+"}\n"
+"")
+        self.green_dmx_slider.setMaximum(255)
         self.green_dmx_slider.setOrientation(Qt.Vertical)
         self.red_dmx_slider = QSlider(self.DMX_tab)
         self.red_dmx_slider.setObjectName(u"red_dmx_slider")
         self.red_dmx_slider.setGeometry(QRect(225, 235, 18, 51))
+        self.red_dmx_slider.setStyleSheet(u"QSlider::handle:vertical{\n"
+"	height: 4px;\n"
+"	background-color: rgb(255, 0, 0);\n"
+" 	margin: 1px; /* expand outside the groove */\n"
+"	border-radius: 4px;\n"
+"	border: 1px solid black;\n"
+"	width: 8px;\n"
+"}\n"
+"\n"
+"\n"
+"\n"
+"")
+        self.red_dmx_slider.setMaximum(255)
         self.red_dmx_slider.setOrientation(Qt.Vertical)
         self.blue_dmx_slider = QSlider(self.DMX_tab)
         self.blue_dmx_slider.setObjectName(u"blue_dmx_slider")
         self.blue_dmx_slider.setGeometry(QRect(450, 155, 18, 51))
+        self.blue_dmx_slider.setStyleSheet(u"QSlider::handle:vertical{\n"
+"	height: 4px;\n"
+"	background-color: rgb(0, 0, 255);\n"
+" 	margin: 1px; /* expand outside the groove */\n"
+"	border-radius: 4px;\n"
+"	border: 1px solid black;\n"
+"	width: 8px;\n"
+"}\n"
+"")
+        self.blue_dmx_slider.setMaximum(255)
         self.blue_dmx_slider.setOrientation(Qt.Vertical)
         self.RGBW_dmx_slider = QSlider(self.DMX_tab)
         self.RGBW_dmx_slider.setObjectName(u"RGBW_dmx_slider")
-        self.RGBW_dmx_slider.setGeometry(QRect(55, 355, 476, 18))
+        self.RGBW_dmx_slider.setGeometry(QRect(55, 355, 476, 26))
         self.RGBW_dmx_slider.setLayoutDirection(Qt.LeftToRight)
-        self.RGBW_dmx_slider.setStyleSheet(u"QSlider{\n"
-"	background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(255, 0, 0, 255), stop:0.166 rgba(255, 255, 0, 255), stop:0.333 rgba(0, 255, 0, 255), stop:0.5 rgba(0, 255, 255, 255), stop:0.666 rgba(0, 0, 255, 255), stop:0.833 rgba(255, 0, 255, 255), stop:1 rgba(255, 0, 0, 255));\n"
-"	\n"
+        self.RGBW_dmx_slider.setStyleSheet(u"QSlider::handle:horizontal\n"
+"{\n"
+"    background: rgb(255, 255, 255);\n"
+"    width: 6px;\n"
+"    height: 12px;\n"
+"	margin: 2px 0px;\n"
+"    border-radius: 7px;\n"
+"    border: 1px solid rgb(0, 0, 0);\n"
+"\n"
+"}\n"
+"QSlider::groove:horizontal\n"
+"{\n"
+"	border-radius: 2px;\n"
+"    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(255, 0, 0, 255), stop:0.166 rgba(255, 255, 0, 255), stop:0.333 rgba(0, 255, 0, 255), stop:0.5 rgba(0, 255, 255, 255), stop:0.666 rgba(0, 0, 255, 255), stop:0.833 rgba(255, 0, 255, 255), stop:1 rgba(255, 0, 0, 255));\n"
+"\n"
 "}")
+        self.RGBW_dmx_slider.setMaximum(255)
         self.RGBW_dmx_slider.setOrientation(Qt.Horizontal)
         self.RGBW_dmx_slider.setTickPosition(QSlider.NoTicks)
         self.RGBW_dmx_slider.setTickInterval(10)
+        self.checkBox = QCheckBox(self.DMX_tab)
+        self.checkBox.setObjectName(u"checkBox")
+        self.checkBox.setGeometry(QRect(220, 455, 151, 26))
         self.tabWidget.addTab(self.DMX_tab, "")
         #MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -805,6 +870,7 @@ class Ui_MainWindow(object):
         self.label_52.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">38</p></body></html>", None))
         self.label_61.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">39</p></body></html>", None))
         self.label_62.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"center\">40</p></body></html>", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"Porta serial", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.RDM_tab), QCoreApplication.translate("MainWindow", u"Mode RDM", None))
         self.label_14.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"right\"><span style=\" font-size:12pt;\">Verde</span></p></body></html>", None))
         self.send_command_dmx.setText(QCoreApplication.translate("MainWindow", u"Enviar comando", None))
@@ -814,6 +880,7 @@ class Ui_MainWindow(object):
         self.label_17.setText(QCoreApplication.translate("MainWindow", u"Endere\u00e7o da lumin\u00e1ria", None))
         self.label_18.setText(QCoreApplication.translate("MainWindow", u"<html><head/><body><p align=\"right\"><span style=\" font-size:12pt;\">Vermelho</span></p></body></html>", None))
         self.label_19.setText(QCoreApplication.translate("MainWindow", u"DMX - Master", None))
+        self.checkBox.setText(QCoreApplication.translate("MainWindow", u"Enviar automaticamente", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.DMX_tab), QCoreApplication.translate("MainWindow", u"Mode DMX", None))
         self.menuAjuda.setTitle(QCoreApplication.translate("MainWindow", u"Ajuda", None))
         self.menuSair.setTitle(QCoreApplication.translate("MainWindow", u"Sair", None))
