@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Guilherme Ribeiro Silveira</author>
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
@@ -58,19 +59,24 @@
     <property name="autoFillBackground">
      <bool>true</bool>
     </property>
+    <property name="styleSheet">
+     <string notr="true">tabWidget {
+    background-color: rgb(232, 232, 232);
+}</string>
+    </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="RDM_tab">
      <attribute name="title">
-      <string>Mode RDM</string>
+      <string>Modo RDM</string>
      </attribute>
      <widget class="QLabel" name="label_9">
       <property name="geometry">
        <rect>
-        <x>230</x>
-        <y>480</y>
-        <width>121</width>
+        <x>225</x>
+        <y>490</y>
+        <width>111</width>
         <height>20</height>
        </rect>
       </property>
@@ -2193,7 +2199,7 @@
      <widget class="QComboBox" name="serialPort">
       <property name="geometry">
        <rect>
-        <x>150</x>
+        <x>110</x>
         <y>450</y>
         <width>68</width>
         <height>21</height>
@@ -2203,7 +2209,7 @@
      <widget class="QLabel" name="label_6">
       <property name="geometry">
        <rect>
-        <x>75</x>
+        <x>35</x>
         <y>450</y>
         <width>61</width>
         <height>21</height>
@@ -2213,10 +2219,76 @@
        <string>Porta serial</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="refreshPorts">
+      <property name="geometry">
+       <rect>
+        <x>180</x>
+        <y>445</y>
+        <width>31</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">QPushButton{
+
+	background = rgb(10, 255, 100);
+
+}
+</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="icon">
+       <iconset resource="resource.qrc">
+        <normaloff>:/newPrefix/images/reload.png</normaloff>:/newPrefix/images/reload.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>16</width>
+        <height>16</height>
+       </size>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="Line" name="line">
+      <property name="geometry">
+       <rect>
+        <x>-5</x>
+        <y>240</y>
+        <width>591</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="Line" name="line_2">
+      <property name="geometry">
+       <rect>
+        <x>-10</x>
+        <y>475</y>
+        <width>591</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="DMX_tab">
      <attribute name="title">
-      <string>Mode DMX</string>
+      <string>Modo DMX</string>
      </attribute>
      <widget class="QLabel" name="label_14">
       <property name="geometry">
@@ -2579,7 +2651,7 @@ QSlider::groove:horizontal
        <number>10</number>
       </property>
      </widget>
-     <widget class="QCheckBox" name="checkBox">
+     <widget class="QCheckBox" name="autoSend_dmx_command">
       <property name="geometry">
        <rect>
         <x>220</x>
@@ -2590,6 +2662,51 @@ QSlider::groove:horizontal
       </property>
       <property name="text">
        <string>Enviar automaticamente</string>
+      </property>
+     </widget>
+     <widget class="Line" name="line_3">
+      <property name="geometry">
+       <rect>
+        <x>-5</x>
+        <y>420</y>
+        <width>591</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="Line" name="line_4">
+      <property name="geometry">
+       <rect>
+        <x>-10</x>
+        <y>120</y>
+        <width>591</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Sunken</enum>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_12">
+      <property name="geometry">
+       <rect>
+        <x>240</x>
+        <y>85</y>
+        <width>20</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string> 0x</string>
       </property>
      </widget>
     </widget>
@@ -2628,8 +2745,92 @@ QSlider::groove:horizontal
     <string>DMX</string>
    </property>
   </action>
+  <action name="actionReload">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/newPrefix/images/reload.png</normaloff>:/newPrefix/images/reload.png</iconset>
+   </property>
+   <property name="text">
+    <string>Reload</string>
+   </property>
+   <property name="toolTip">
+    <string>reload something</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::NoRole</enum>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <tabstops>
+  <tabstop>source_UID</tabstop>
+  <tabstop>parametro</tabstop>
+  <tabstop>white_dmx_slider</tabstop>
+  <tabstop>port_ID</tabstop>
+  <tabstop>classe</tabstop>
+  <tabstop>send_command</tabstop>
+  <tabstop>destination_UID</tabstop>
+  <tabstop>sub_device</tabstop>
+  <tabstop>command_1</tabstop>
+  <tabstop>command_2</tabstop>
+  <tabstop>command_4</tabstop>
+  <tabstop>command_3</tabstop>
+  <tabstop>command_6</tabstop>
+  <tabstop>command_8</tabstop>
+  <tabstop>command_7</tabstop>
+  <tabstop>command_5</tabstop>
+  <tabstop>command_14</tabstop>
+  <tabstop>command_10</tabstop>
+  <tabstop>command_16</tabstop>
+  <tabstop>command_12</tabstop>
+  <tabstop>command_15</tabstop>
+  <tabstop>command_11</tabstop>
+  <tabstop>command_13</tabstop>
+  <tabstop>command_9</tabstop>
+  <tabstop>command_20</tabstop>
+  <tabstop>command_18</tabstop>
+  <tabstop>command_19</tabstop>
+  <tabstop>command_17</tabstop>
+  <tabstop>command_26</tabstop>
+  <tabstop>command_31</tabstop>
+  <tabstop>command_32</tabstop>
+  <tabstop>command_29</tabstop>
+  <tabstop>command_37</tabstop>
+  <tabstop>command_30</tabstop>
+  <tabstop>command_22</tabstop>
+  <tabstop>command_36</tabstop>
+  <tabstop>command_28</tabstop>
+  <tabstop>command_24</tabstop>
+  <tabstop>command_27</tabstop>
+  <tabstop>command_23</tabstop>
+  <tabstop>command_25</tabstop>
+  <tabstop>command_21</tabstop>
+  <tabstop>command_34</tabstop>
+  <tabstop>command_33</tabstop>
+  <tabstop>command_35</tabstop>
+  <tabstop>command_38</tabstop>
+  <tabstop>command_40</tabstop>
+  <tabstop>command_39</tabstop>
+  <tabstop>add_param_1</tabstop>
+  <tabstop>add_param_2</tabstop>
+  <tabstop>frame_size</tabstop>
+  <tabstop>serialPort</tabstop>
+  <tabstop>blue_dmx_box</tabstop>
+  <tabstop>send_command_dmx</tabstop>
+  <tabstop>green_dmx_box</tabstop>
+  <tabstop>red_dmx_box</tabstop>
+  <tabstop>distination_UID_2</tabstop>
+  <tabstop>white_dmx_box</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>green_dmx_slider</tabstop>
+  <tabstop>red_dmx_slider</tabstop>
+  <tabstop>blue_dmx_slider</tabstop>
+  <tabstop>RGB_dmx_slider</tabstop>
+  <tabstop>autoSend_dmx_command</tabstop>
+  <tabstop>refreshPorts</tabstop>
+ </tabstops>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
  <designerdata>
   <property name="gridDeltaX">

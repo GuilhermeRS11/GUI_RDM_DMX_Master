@@ -19,18 +19,20 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.app = app
         self.setWindowTitle("RDM DMX Master")
 
-        """ 
-        #############################################################################################
-                              Inicializacao de parametros para RDM_frontend
-        #############################################################################################
-        """
-
         # Executa os camandos abaixo apenas na inicialização do app
         global Flag_just_once
         if Flag_just_once:
             Flag_just_once = False
             self.serialFindPorts()      # Faz a primeira busca pelas portas serial do sistema
             self.caixaCommand()         # Atualiza os campos de exibicao com os valores zerados
+            self.rgbSlider()            # Atualiza os valores das cores atraves da posicao inicial do slider rgb
+
+
+        """ 
+        #############################################################################################
+                                    Area de sensitividade do RDM_frontend
+        #############################################################################################
+        """
 
         # Identifica a ação dos principais elementos graficos
         self.classe.activated.connect(self.ChangeParameter)
@@ -60,13 +62,11 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
 
         self.alignement_labels() # Alinha as caixas de comando ao centro
 
-        # Inicia comunicação serial e set a porta
-        #self.serialPort.activated.connect(self.serialFindPorts)
-
+        self.refreshPorts.clicked.connect(self.serialFindPorts) # Atualiza as portar quando clicar no refresh
 
         """ 
         #############################################################################################
-                                Inicializacao de parametros para DMX_frontend
+                                    Area de sensitividade do DMX_frontend
         #############################################################################################
         """
 
@@ -80,6 +80,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.green_dmx_slider.valueChanged.connect(self.greenSlider)
         self.RGB_dmx_slider.valueChanged.connect(self.rgbSlider)
 
+        self.autoSend_dmx_command.stateChanged.connect(self.autoDMXcommand) 
         
     """ 
     #############################################################################################
@@ -464,3 +465,16 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.red_dmx_slider.setValue(red)
         self.blue_dmx_slider.setValue(blue)
         self.green_dmx_slider.setValue(green)
+
+    def sendDMXcommand(self):
+        # Chamar o backend pra montar o quadro e enviar
+        i = 0
+
+    def autoDMXcommand(self):
+        # Aproveitar mesmo codigo do de cima, chamando equanto o chk for sim
+        if self.autoSend_dmx_command.isChecked():
+            # Se tiver marcado
+            self.send_command_dmx.setEnabled(False)
+        else:
+            # Se nao tiver marcado
+            self.send_command_dmx.setEnabled(True)

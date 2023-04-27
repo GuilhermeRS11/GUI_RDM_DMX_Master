@@ -10,10 +10,9 @@ window.show()
 app.exec()
 window.SendCommand()
 
-# Trabalhar na interface DMX, pois a RDM está muito boa
-# Pesquisar como enviar dados via USB com python
 # Integrar envio e recebimento de frames
+# Deve ser enviado no formato inteiro e não em char. Ver como o receptor e transmissor em C se comunicam
+# Encontrar as portas serial disponiveis causa travamento. Pq sera?
 
-# Verificar a funcionalidade do chenck_sum. A exibição está mostrando apenas 1 ao invés de 10 no primeiro byte
-# O envio dos dados deve ser 01 e não 1. Mudar isso no envio.
-# Deve ser enviado no formato inteiro e não em char
+# Segundo o protocolo, todos os frames de DMX devem conter 512 slots de dados e 1 slot de inicio
+# Porem a gente programou pra um numero de canais. O que é isso? Precisa? Será que canais sao o numero de cores de led em uma mesma luminaria?
