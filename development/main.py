@@ -11,8 +11,14 @@ app.exec()
 window.SendCommand()
 
 # Integrar envio e recebimento de frames
+
 # Deve ser enviado no formato inteiro e não em char. Ver como o receptor e transmissor em C se comunicam
+
 # Encontrar as portas serial disponiveis causa travamento. Pq sera?
 
 # Segundo o protocolo, todos os frames de DMX devem conter 512 slots de dados e 1 slot de inicio
 # Porem a gente programou pra um numero de canais. O que é isso? Precisa? Será que canais sao o numero de cores de led em uma mesma luminaria?
+
+# Arrumar label do coamndo DMX que nao ta apagando os comando que ja foram dados quando se troca o endereco
+
+# Descobrir se é necessário que uma luminaria com mais de uma cor tenha seu inicio em um slot especifico. Divisivel por 4 por exemplo
