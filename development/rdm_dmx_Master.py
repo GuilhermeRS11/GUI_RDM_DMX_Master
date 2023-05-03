@@ -490,11 +490,12 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         green_value = self.green_dmx_box.value()
         red_value = self.red_dmx_box.value()
 
+        DMX_frame.clear()     # Limpa o conteudo do frame antes de atribuir qualquer valor
         for i in range(256):
         # Inicializa o frame de envio do DMX
             DMX_frame.append(0x0)
 
-        if literal_eval(DMX_address) < 252:
+        if literal_eval(DMX_address) < 253:
             # Adiciona o valor das cores no endereco solicitado
             DMX_frame[literal_eval(DMX_address)] = white_value
             DMX_frame[literal_eval(DMX_address) + 1] = blue_value
