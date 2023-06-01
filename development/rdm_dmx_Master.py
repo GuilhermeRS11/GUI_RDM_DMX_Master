@@ -347,11 +347,26 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                            bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
         # Envia os dados via serial byte a byte
+        
+        # MBB(MbB) - entre 0 a 1s (nível lógico 1)
+        # Mark before Break. The period of time between the end if the second stop bit of the last slot and the high to low transition that signifies the start of break.
+
+        # Space for break - 176us - (nível lógico 0)
+
+        # MAB(MaB) - 12us a 1 s (nível lógico 1)
+        # Mark afer Break. The period of time between the low to high transition that signifies the end of
+        # break and the high to low transition which is the start bit of the START code (slot 0)
+
+        serialComunication.send_break((176+12)/1000000) # Envia os sinais de break e mark antes do primeiro slot
+
         for i in range(command2send[2] + 2):
+            # Start Time() ???
             serialComunication.write(f"{command2send[i]:0{2}X}".encode('Ascii'))
-            
-        #receive = serialComunication.read()
-        #print(receive.decode('Ascii'))
+            # MARK time btw slots - 0 a 1s (nível lógico 1)
+
+        receive = serialComunication.read_until(0xCC, 1)
+        print(receive.decode('Ascii'))
+
         serialComunication.close()
 
     def clearAddParam(self):
