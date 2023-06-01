@@ -8,6 +8,10 @@ def Calc_checksum(frame_size, frame):
 
     return soma
 
+# Append hex number on teste
+def append_hex(teste, hex_number):
+    return teste + bytes.fromhex(f"{hex_number:0{2}X}")
+
 def Set_frame(UID_D, UID_S, TN, Message_Length, Port_ID, Message_Count, Sub_Device, CC, PID, PDL, LB_PD, UB_PD):
     # Organiza o frame de acordo com os parâmetros passados e no formato do RDM
     frame = []

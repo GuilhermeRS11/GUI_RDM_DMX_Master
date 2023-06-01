@@ -344,10 +344,10 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         
         serialComunication.close()
         serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
-                           bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
+                           bytesize=8, timeout=1, stopbits=serial.STOPBITS_TWO)
 
         # Envia os dados via serial byte a byte
-        
+       
         # MBB(MbB) - entre 0 a 1s (nível lógico 1)
         # Mark before Break. The period of time between the end if the second stop bit of the last slot and the high to low transition that signifies the start of break.
 
@@ -357,15 +357,24 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         # Mark afer Break. The period of time between the low to high transition that signifies the end of
         # break and the high to low transition which is the start bit of the START code (slot 0)
 
-        serialComunication.send_break((176+12)/1000000) # Envia os sinais de break e mark antes do primeiro slot
+        #serialComunication.send_break((176+12)/10000000) # Envia os sinais de break e mark antes do primeiro slot
+        
 
-        for i in range(command2send[2] + 2):
+        completeComand = bytes.fromhex(f"{0xCC:0{2}X}")
+        #for i in range(command2send[2] + 2):
+        for i in range(command2send[2] + 1):
             # Start Time() ???
-            serialComunication.write(f"{command2send[i]:0{2}X}".encode('Ascii'))
+            #serialComunication.write(bytes.fromhex(f"{command2send[i]:0{2}X}"))
             # MARK time btw slots - 0 a 1s (nível lógico 1)
+            completeComand = RDM.append_hex(completeComand, command2send[i+1])
+        
+        print(completeComand)
+        serialComunication.write(completeComand) # Envia o comando completo
 
-        receive = serialComunication.read_until(0xCC, 1)
-        print(receive.decode('Ascii'))
+        #time.sleep(0.5)  # Wait for a short duration (adjust as needed)
+        receive = serialComunication.read(20)
+        print(receive)
+        self.slave_Response.setText(str(receive))
 
         serialComunication.close()
 
@@ -495,6 +504,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
     def assembleDMX(self):
         # Monta o quadro DMX 
         global DMX_frame
+        global DMX_command 
        
         DMX_address = "0x" + self.DMX_address.displayText()
         if DMX_address == "0x":
@@ -506,21 +516,30 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         red_value = self.red_dmx_box.value()
 
         DMX_frame.clear()     # Limpa o conteudo do frame antes de atribuir qualquer valor
-        for i in range(256):
+        
+        DMX_command = bytes.fromhex(f"{0x00:0{2}X}")
+        
+        for i in range(512):
         # Inicializa o frame de envio do DMX
             DMX_frame.append(0x0)
-
-        if literal_eval(DMX_address) < 253:
+            DMX_command = RDM.append_hex(DMX_command, 0x00)
+            
+            #if literal_eval(DMX_address) < 508:
             # Adiciona o valor das cores no endereco solicitado
-            DMX_frame[literal_eval(DMX_address)] = white_value
-            DMX_frame[literal_eval(DMX_address) + 1] = blue_value
-            DMX_frame[literal_eval(DMX_address) + 2] = green_value
-            DMX_frame[literal_eval(DMX_address) + 3] = red_value
+                #DMX_frame[literal_eval(DMX_address)] = white_value
+                #DMX_frame[literal_eval(DMX_address) + 1] = blue_value
+                #DMX_frame[literal_eval(DMX_address) + 2] = green_value
+                #DMX_frame[literal_eval(DMX_address) + 3] = red_value
+            if (i == literal_eval(DMX_address)): 
+                DMX_command = RDM.append_hex(DMX_command, white_value)
+                DMX_command = RDM.append_hex(DMX_command, blue_value)
+                DMX_command = RDM.append_hex(DMX_command, green_value)
+                DMX_command = RDM.append_hex(DMX_command, red_value)
 
         # Inicializa a label de comando a ser enciado
         self.DMX_command_label.clear()
         self.DMX_command_label.setText("")
-        for i in range(256):
+        for i in range(512):
             # Mostra o frame DMX a ser enviado                
             self.DMX_command_label.setText(self.DMX_command_label.text() + " " + f"{DMX_frame[i]:0{2}X}")
             if (i % 32 == 0) and (i != 1) and (i != 0):
@@ -531,14 +550,16 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         # Envia frame DMX por serial. Pode ser que seja necessáio despeitar os tempos
         global serialComunication
 
-         #serialComunication.close()
-        #serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
-        #                   bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
+        serialComunication.close()
+        serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
+                           bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
-        #for i in range(256):
-        #    serialComunication.write(f"{DMX_frame[i]:0{2}X}".encode('Ascii'))
-        
-        #serialComunication.close()
+        #for i in range(512):
+            #serialComunication.write(bytes.fromhex(f"{DMX_frame[i]:0{2}X}"))
+       
+        print(DMX_command)
+        serialComunication.write(DMX_command) # Envia o comando completo 
+        serialComunication.close()
 
     def autoDMXcommand(self):
         # Aproveitar mesmo codigo do de cima, chamando equanto o chk for sim
