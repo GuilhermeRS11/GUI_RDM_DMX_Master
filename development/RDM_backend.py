@@ -5,11 +5,12 @@ def Calc_checksum(frame_size, frame):
     soma = 0
     for i in range(frame_size):
         soma = soma + frame[i]
-    #print(soma)   
-    #print((soma >> 8) & 0xff)
-    #print((soma & 0xff))
 
     return soma
+
+# Append hex number on teste
+def append_hex(teste, hex_number):
+    return teste + bytes.fromhex(f"{hex_number:0{2}X}")
 
 def Set_frame(UID_D, UID_S, TN, Message_Length, Port_ID, Message_Count, Sub_Device, CC, PID, PDL, LB_PD, UB_PD):
     # Organiza o frame de acordo com os parâmetros passados e no formato do RDM
@@ -223,30 +224,3 @@ def SET_identify_device(UID_D, UID_S, TN, Port_ID, Sub_Device, Identify_start_st
 
     data_set = Set_frame(UID_D, UID_S, TN, Message_Length, Port_ID, Message_Count, Sub_Device, CC, PID, PDL, LB_PD, UB_PD)
     return data_set
-
-"""
-TN = 0x00
-ID = 0x01
-Identify_start_stop = 0x01
-PID_Resquested = 0x25FA
-DMX_address = 0xC13F
-Sub_Dev = 0x2AF7
-LB_PD = 0xFF2354E13DA2
-UB_PD = 0x40028922FEDC
-UID_D = 0x123456789ABC
-UID_S = 0xCBA987654321
-
-data_test = SET_identify_device(UID_D, UID_S, TN, ID, Sub_Dev, Identify_start_stop)
-frame_size = data_test[2] + 2 # A posição 2 guarda o tamanho do frame, com exceção dos dois bytes do checksum
-
-
-sys.stdout.write("0x")
-for i in range(frame_size):
-    hex_data = data_test[i].to_bytes(1, byteorder='little')
-    hex_string = hex_data.hex()
-    print(hex_string)
-    #sys.stdout.write(hex(hex_string[i])[2:])
-
-print("")
-print(frame_size)
-"""
