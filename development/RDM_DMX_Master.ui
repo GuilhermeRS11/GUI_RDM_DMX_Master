@@ -141,7 +141,7 @@
      <widget class="QLabel" name="label_4">
       <property name="geometry">
        <rect>
-        <x>210</x>
+        <x>220</x>
         <y>10</y>
         <width>141</width>
         <height>41</height>
@@ -2240,7 +2240,7 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="resource.qrc">
+       <iconset resource="../../Documents/GitHub/GUI_RDM_DMX_Master-1/development/resource.qrc">
         <normaloff>:/newPrefix/images/reload.png</normaloff>:/newPrefix/images/reload.png</iconset>
       </property>
       <property name="iconSize">
@@ -2408,7 +2408,7 @@
      <widget class="QLineEdit" name="DMX_address">
       <property name="geometry">
        <rect>
-        <x>345</x>
+        <x>455</x>
         <y>85</y>
         <width>41</width>
         <height>21</height>
@@ -2436,7 +2436,7 @@
      <widget class="QLabel" name="label_17">
       <property name="geometry">
        <rect>
-        <x>175</x>
+        <x>285</x>
         <y>85</y>
         <width>141</width>
         <height>20</height>
@@ -2488,7 +2488,7 @@
       <property name="geometry">
        <rect>
         <x>220</x>
-        <y>25</y>
+        <y>10</y>
         <width>141</width>
         <height>41</height>
        </rect>
@@ -2705,7 +2705,7 @@ QSlider::groove:horizontal
      <widget class="QLabel" name="label_12">
       <property name="geometry">
        <rect>
-        <x>325</x>
+        <x>435</x>
         <y>85</y>
         <width>20</width>
         <height>20</height>
@@ -2713,22 +2713,6 @@ QSlider::groove:horizontal
       </property>
       <property name="text">
        <string> 0x</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="DMX_command_label">
-      <property name="geometry">
-       <rect>
-        <x>45</x>
-        <y>350</y>
-        <width>521</width>
-        <height>136</height>
-       </rect>
-      </property>
-      <property name="autoFillBackground">
-       <bool>true</bool>
-      </property>
-      <property name="text">
-       <string/>
       </property>
      </widget>
      <widget class="QLabel" name="label_15">
@@ -2749,111 +2733,59 @@ QSlider::groove:horizontal
        <string>Frame a ser enviado em exadecimal</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_8">
+     <widget class="QLabel" name="label_71">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>350</y>
-        <width>20</width>
-        <height>16</height>
+        <x>100</x>
+        <y>85</y>
+        <width>86</width>
+        <height>20</height>
        </rect>
       </property>
-      <property name="layoutDirection">
-       <enum>Qt::RightToLeft</enum>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;0&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>Slots por link</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_60">
+     <widget class="QListWidget" name="DMX_command_label">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>367</y>
-        <width>20</width>
-        <height>16</height>
+        <x>15</x>
+        <y>355</y>
+        <width>541</width>
+        <height>131</height>
        </rect>
       </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;32&lt;/p&gt;&lt;p align=&quot;right&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+       </font>
       </property>
+      <item>
+       <property name="text">
+        <string>000 -  00 00 00 00 00 00 00 00 00 00 00 00 AD 2A 00 AA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00</string>
+       </property>
+      </item>
      </widget>
-     <widget class="QLabel" name="label_65">
+     <widget class="QSpinBox" name="Slots_per_link">
       <property name="geometry">
        <rect>
-        <x>20</x>
-        <y>384</y>
-        <width>20</width>
-        <height>16</height>
+        <x>190</x>
+        <y>85</y>
+        <width>56</width>
+        <height>22</height>
        </rect>
       </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;64&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <property name="minimum">
+       <number>5</number>
       </property>
-     </widget>
-     <widget class="QLabel" name="label_66">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>401</y>
-        <width>20</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;96&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_67">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>418</y>
-        <width>20</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;128&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_68">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>435</y>
-        <width>20</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;160&lt;/p&gt;&lt;p align=&quot;right&quot;&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_69">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>469</y>
-        <width>20</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;224&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_70">
-      <property name="geometry">
-       <rect>
-        <x>20</x>
-        <y>452</y>
-        <width>20</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;192&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <property name="maximum">
+       <number>513</number>
       </property>
      </widget>
     </widget>
@@ -2894,7 +2826,7 @@ QSlider::groove:horizontal
   </action>
   <action name="actionReload">
    <property name="icon">
-    <iconset resource="resource.qrc">
+    <iconset resource="../../Documents/GitHub/GUI_RDM_DMX_Master-1/development/resource.qrc">
      <normaloff>:/newPrefix/images/reload.png</normaloff>:/newPrefix/images/reload.png</iconset>
    </property>
    <property name="text">
@@ -2976,7 +2908,7 @@ QSlider::groove:horizontal
   <tabstop>refreshPorts</tabstop>
  </tabstops>
  <resources>
-  <include location="resource.qrc"/>
+  <include location="../../Documents/GitHub/GUI_RDM_DMX_Master-1/development/resource.qrc"/>
  </resources>
  <connections/>
  <designerdata>

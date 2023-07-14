@@ -22,12 +22,16 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
 
         # Executa os camandos abaixo apenas na inicialização do app
         global Flag_just_once
+        global Slots_per_link
+
         if Flag_just_once:
             Flag_just_once = False
-            self.serialFindPorts()      # Faz a primeira busca pelas portas serial do sistema
-            self.caixaCommand()         # Atualiza os campos de exibicao com os valores zerados
-            self.rgbSlider()            # Atualiza os valores das cores atraves da posicao inicial do slider rgb
-            self.assembleDMX()          # Atualiza o comando a ser enviado no DMX
+    
+            self.Slots_per_link.setValue(513)  # Inicializa o numero de slots por link com o valor 513
+            self.serialFindPorts()             # Faz a primeira busca pelas portas serial do sistema
+            self.caixaCommand()                # Atualiza os campos de exibicao com os valores zerados
+            self.rgbSlider()                   # Atualiza os valores das cores atraves da posicao inicial do slider rgb
+            self.assembleDMX()                 # Atualiza o comando a ser enviado no DMX          
 
 
         """ 
@@ -83,6 +87,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.RGB_dmx_slider.valueChanged.connect(self.rgbSlider)
 
         self.DMX_address.textChanged.connect(self.assembleDMX)
+        self.Slots_per_link.valueChanged.connect(self.assembleDMX)
         self.white_dmx_box.textChanged.connect(self.assembleDMX)
         self.red_dmx_box.textChanged.connect(self.assembleDMX)
         self.blue_dmx_box.textChanged.connect(self.assembleDMX)
@@ -485,50 +490,60 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         if DMX_address == "0x":
             DMX_address = "0x0"
 
+        Slots_per_link = self.Slots_per_link.value()
         white_value = self.white_dmx_box.value()
         blue_value = self.blue_dmx_box.value()
         green_value = self.green_dmx_box.value()
         red_value = self.red_dmx_box.value()
-
+       
         DMX_frame.clear()     # Limpa o conteudo do frame antes de atribuir qualquer valor
-        for i in range(256):
+        for i in range(Slots_per_link):
         # Inicializa o frame de envio do DMX
             DMX_frame.append(0x0)
 
-        if literal_eval(DMX_address) < 253:
+        if (literal_eval(DMX_address)) and (literal_eval(DMX_address) < Slots_per_link - 2):
             # Adiciona o valor das cores no endereco solicitado
             DMX_frame[literal_eval(DMX_address)] = white_value
             DMX_frame[literal_eval(DMX_address) + 1] = blue_value
             DMX_frame[literal_eval(DMX_address) + 2] = green_value
             DMX_frame[literal_eval(DMX_address) + 3] = red_value
 
-        # Inicializa a label de comando a ser enciado
-        self.DMX_command_label.clear()
-        self.DMX_command_label.setText("")
-        for i in range(256):
-            # Mostra o frame DMX a ser enviado                
-            self.DMX_command_label.setText(self.DMX_command_label.text() + " " + f"{DMX_frame[i]:0{2}X}")
-            if (i % 32 == 0) and (i != 1) and (i != 0):
-                # Separa a impressao em grupos de 30 bytes
-                self.DMX_command_label.setText(self.DMX_command_label.text() + "\n")    
+        print(DMX_frame)
+        #printa o tamanho de DMX_frame
+        print(len(DMX_frame))    
 
+        # Inicializa a label de comando a ser iniciado
+        self.DMX_command_label.clear()
+        DMX_frame_show = "000 - 00"
+        
+        for i in range(2, Slots_per_link + 1):
+            # Mostra o frame DMX a ser enviado                
+            DMX_frame_show = DMX_frame_show + " " + f"{DMX_frame[i-1]:0{2}X}"
+            if ((i % 32 == 0) and (i != 1) and (i != 0)) or (i == Slots_per_link):
+                # Separa a impressao em grupos de 30 bytes
+                self.DMX_command_label.addItem(DMX_frame_show)
+                DMX_frame_show = f"{i:0{3}}" + " -"
+                            
     def sendDMXcommand(self): 
         # Envia frame DMX por serial. Pode ser que seja necessáio despeitar os tempos
         global serialComunication
 
-         #serialComunication.close()
-        #serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
-        #                   bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
+        serialComunication.close()
+        serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
+                                           bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
-        #for i in range(256):
-        #    serialComunication.write(f"{DMX_frame[i]:0{2}X}".encode('Ascii'))
+        for i in range(literal_eval(Slots_per_link)):
+            serialComunication.write(f"{DMX_frame[i]:0{2}X}".encode('Ascii'))
         
-        #serialComunication.close()
+        serialComunication.close()
 
     def autoDMXcommand(self):
         # Aproveitar mesmo codigo do de cima, chamando equanto o chk for sim
         if self.autoSend_dmx_command.isChecked():
             # Se tiver marcado
+            while self.autoSend_dmx_command.isChecked():
+                self.sendDMXcommand()
+
             self.send_command_dmx.setEnabled(False)
         else:
             # Se nao tiver marcado
