@@ -509,7 +509,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
     def assembleDMX(self):
         # Monta o quadro DMX 
         global DMX_frame
-        global DMX_command 
+        global Slots_per_link 
        
         DMX_address = "0x" + self.DMX_address.displayText()
         if DMX_address == "0x":
@@ -529,13 +529,13 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         if (literal_eval(DMX_address)) and (literal_eval(DMX_address) < Slots_per_link - 2):
             # Adiciona o valor das cores no endereco solicitado
             DMX_frame[literal_eval(DMX_address)] = white_value
-            DMX_frame[literal_eval(DMX_address) + 1] = blue_value
-            DMX_frame[literal_eval(DMX_address) + 2] = green_value
+            DMX_frame[literal_eval(DMX_address) + 1] = green_value
+            DMX_frame[literal_eval(DMX_address) + 2] = blue_value
             DMX_frame[literal_eval(DMX_address) + 3] = red_value
 
-        print(DMX_frame)
+        #print(DMX_frame)
         #printa o tamanho de DMX_frame
-        print(len(DMX_frame))    
+        #print(len(DMX_frame))    
 
         # Inicializa a label de comando a ser iniciado
         self.DMX_command_label.clear()
@@ -556,10 +556,9 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         serialComunication.close()
         serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
                                            bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
-
-        for i in range(literal_eval(Slots_per_link)):
-            serialComunication.write(f"{DMX_frame[i]:0{2}X}".encode('Ascii'))
-        
+        print(Slots_per_link)
+        for i in range(Slots_per_link):
+            serialComunication.write(DMX_frame[i].to_bytes(1, byteorder='big'))
         serialComunication.close()
 
     def autoDMXcommand(self):

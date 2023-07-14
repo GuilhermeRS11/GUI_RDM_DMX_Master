@@ -17,4 +17,4 @@ window.SendCommand()
 # Descobrir se é necessário que uma luminaria com mais de uma cor tenha seu inicio em um slot especifico. Divisivel por 4 por exemplo
 # Também descobrir se há uma sequencia de cores que deve ser seguida
 
-# Pequeno problema na construção do frame. Quando endereço no final fica deslacado em 1 bit para a esquerda
+# desenvolver timer para ativar a luminária periodicamnete
