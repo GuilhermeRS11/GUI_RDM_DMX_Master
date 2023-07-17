@@ -5,6 +5,7 @@ from ast import literal_eval
 
 import RDM_backend as RDM
 import serial
+import time
 
 Flag_just_once = True
 
@@ -23,15 +24,18 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         # Executa os camandos abaixo apenas na inicialização do app
         global Flag_just_once
         global Slots_per_link
+        global Auto_DMX_send
 
         if Flag_just_once:
             Flag_just_once = False
+            Auto_DMX_send = False
     
             self.Slots_per_link.setValue(513)  # Inicializa o numero de slots por link com o valor 513
             self.serialFindPorts()             # Faz a primeira busca pelas portas serial do sistema
             self.caixaCommand()                # Atualiza os campos de exibicao com os valores zerados
             self.rgbSlider()                   # Atualiza os valores das cores atraves da posicao inicial do slider rgb
-            self.assembleDMX()                 # Atualiza o comando a ser enviado no DMX          
+            self.assembleDMX()                 # Atualiza o comando a ser enviado no DMX   
+                   
 
 
         """ 
@@ -97,6 +101,9 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
 
         self.DMX_address.setPlaceholderText("1 - FF")  
         self.DMX_address.setMaxLength(2) # Define o limite de caracteres a serem digitados
+
+        # Instanciação do timer para enviar comandando DMX automaticamente, espaçados de algum tempo
+        self.last_dmx_command_time = 0
         
     """ 
     #############################################################################################
@@ -350,33 +357,14 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         serialComunication.close()
         serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
                            bytesize=8, timeout=1, stopbits=serial.STOPBITS_TWO)
-
-        # Envia os dados via serial byte a byte
-       
-        # MBB(MbB) - entre 0 a 1s (nível lógico 1)
-        # Mark before Break. The period of time between the end if the second stop bit of the last slot and the high to low transition that signifies the start of break.
-
-        # Space for break - 176us - (nível lógico 0)
-
-        # MAB(MaB) - 12us a 1 s (nível lógico 1)
-        # Mark afer Break. The period of time between the low to high transition that signifies the end of
-        # break and the high to low transition which is the start bit of the START code (slot 0)
-
-        #serialComunication.send_break((176+12)/10000000) # Envia os sinais de break e mark antes do primeiro slot
         
-
-        completeComand = bytes.fromhex(f"{0xCC:0{2}X}")
-        #for i in range(command2send[2] + 2):
-        for i in range(command2send[2] + 1):
-            # Start Time() ???
-            #serialComunication.write(bytes.fromhex(f"{command2send[i]:0{2}X}"))
-            # MARK time btw slots - 0 a 1s (nível lógico 1)
-            completeComand = RDM.append_hex(completeComand, command2send[i+1])
+        # Faz o envio dos dados RDM, byte a byte
+        for i in range(command2send[2] + 2):
+            serialComunication.write(command2send[i].to_bytes(1, byteorder='big'))
+            #print(command2send[i].to_bytes(1, byteorder='big'))
+        print("Comando RDM enviado")
         
-        print(completeComand)
-        serialComunication.write(completeComand) # Envia o comando completo
-
-        #time.sleep(0.5)  # Wait for a short duration (adjust as needed)
+        # Faz o recebimento dos dados RDM
         receive = serialComunication.read(20)
         print(receive)
         self.slave_Response.setText(str(receive))
@@ -505,11 +493,13 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.red_dmx_slider.setValue(red)
         self.blue_dmx_slider.setValue(blue)
         self.green_dmx_slider.setValue(green)
+        self.white_dmx_slider.setValue(0)
 
     def assembleDMX(self):
         # Monta o quadro DMX 
         global DMX_frame
-        global Slots_per_link 
+        global Slots_per_link
+        global Auto_DMX_send 
        
         DMX_address = "0x" + self.DMX_address.displayText()
         if DMX_address == "0x":
@@ -531,11 +521,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
             DMX_frame[literal_eval(DMX_address)] = white_value
             DMX_frame[literal_eval(DMX_address) + 1] = green_value
             DMX_frame[literal_eval(DMX_address) + 2] = blue_value
-            DMX_frame[literal_eval(DMX_address) + 3] = red_value
-
-        #print(DMX_frame)
-        #printa o tamanho de DMX_frame
-        #print(len(DMX_frame))    
+            DMX_frame[literal_eval(DMX_address) + 3] = red_value  
 
         # Inicializa a label de comando a ser iniciado
         self.DMX_command_label.clear()
@@ -548,7 +534,16 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 # Separa a impressao em grupos de 30 bytes
                 self.DMX_command_label.addItem(DMX_frame_show)
                 DMX_frame_show = f"{i:0{3}}" + " -"
-                            
+                  
+        if Auto_DMX_send:
+            # Envia automaticamente os comandos se a caixa estiver marcada e verifica se já é tempo de enviar para a serial 
+            current_time = time.time() * 1000  # Get the current time in milliseconds
+            elapsed_time = current_time - self.last_dmx_command_time
+
+            if elapsed_time > 500:
+                self.sendDMXcommand()
+                self.last_dmx_command_time = current_time
+
     def sendDMXcommand(self): 
         # Envia frame DMX por serial. Pode ser que seja necessáio despeitar os tempos
         global serialComunication
@@ -556,19 +551,19 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         serialComunication.close()
         serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
                                            bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
-        print(Slots_per_link)
         for i in range(Slots_per_link):
             serialComunication.write(DMX_frame[i].to_bytes(1, byteorder='big'))
         serialComunication.close()
+        print("Comando DMX enviado")
 
     def autoDMXcommand(self):
-        # Aproveitar mesmo codigo do de cima, chamando equanto o chk for sim
+        global Auto_DMX_send
+        # Envia automaticamente os comandos 
         if self.autoSend_dmx_command.isChecked():
-            # Se tiver marcado
-            while self.autoSend_dmx_command.isChecked():
-                self.sendDMXcommand()
-
+            # Se estiver marcado 
             self.send_command_dmx.setEnabled(False)
+            Auto_DMX_send = True
         else:
-            # Se nao tiver marcado
+            # Se nao estiver marcado
             self.send_command_dmx.setEnabled(True)
+            Auto_DMX_send = False
