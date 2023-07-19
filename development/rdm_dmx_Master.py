@@ -361,15 +361,17 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         # Faz o envio dos dados RDM, byte a byte
         for i in range(command2send[2] + 2):
             serialComunication.write(command2send[i].to_bytes(1, byteorder='big'))
-            print(command2send[i].to_bytes(1, byteorder='big'))
-                
-        # Faz o recebimento dos dados RDM
-        #receive = serialComunication.read(20)
-        #print(receive)
-        #self.slave_Response.setText(str(receive))
-
-        serialComunication.close()
+            #print(command2send[i].to_bytes(1, byteorder='big'))
+        
         print("Comando RDM enviado")
+
+        # Faz o recebimento dos dados RDM
+        receive = serialComunication.read(300)
+        #print(receive)
+
+        self.slave_Response.setText(str(receive))
+        serialComunication.close()
+        
 
     def clearAddParam(self):
         self.add_param_1.setText("")
