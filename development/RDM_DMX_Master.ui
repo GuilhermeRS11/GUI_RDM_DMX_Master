@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>580</width>
-    <height>632</height>
+    <height>695</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
       <x>0</x>
       <y>20</y>
       <width>581</width>
-      <height>601</height>
+      <height>646</height>
      </rect>
     </property>
     <property name="palette">
@@ -65,7 +65,7 @@
 }</string>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="RDM_tab">
      <attribute name="title">
@@ -189,7 +189,7 @@
         <x>10</x>
         <y>510</y>
         <width>561</width>
-        <height>31</height>
+        <height>91</height>
        </rect>
       </property>
       <property name="autoFillBackground">
@@ -2240,7 +2240,7 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../../Documents/GitHub/GUI_RDM_DMX_Master-1/development/resource.qrc">
+       <iconset resource="resource.qrc">
         <normaloff>:/newPrefix/images/reload.png</normaloff>:/newPrefix/images/reload.png</iconset>
       </property>
       <property name="iconSize">
@@ -2826,7 +2826,7 @@ QSlider::groove:horizontal
   </action>
   <action name="actionReload">
    <property name="icon">
-    <iconset resource="../../Documents/GitHub/GUI_RDM_DMX_Master-1/development/resource.qrc">
+    <iconset resource="resource.qrc">
      <normaloff>:/newPrefix/images/reload.png</normaloff>:/newPrefix/images/reload.png</iconset>
    </property>
    <property name="text">
@@ -2908,7 +2908,7 @@ QSlider::groove:horizontal
   <tabstop>refreshPorts</tabstop>
  </tabstops>
  <resources>
-  <include location="../../Documents/GitHub/GUI_RDM_DMX_Master-1/development/resource.qrc"/>
+  <include location="resource.qrc"/>
  </resources>
  <connections/>
  <designerdata>

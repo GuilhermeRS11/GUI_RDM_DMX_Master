@@ -27,7 +27,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(580, 632)
+        MainWindow.resize(580, 695)
         self.actionDMX = QAction(MainWindow)
         self.actionDMX.setObjectName(u"actionDMX")
         self.actionRDM = QAction(MainWindow)
@@ -42,7 +42,7 @@ class Ui_MainWindow(object):
         self.centralwidget.setObjectName(u"centralwidget")
         self.tabWidget = QTabWidget(self.centralwidget)
         self.tabWidget.setObjectName(u"tabWidget")
-        self.tabWidget.setGeometry(QRect(0, 20, 581, 601))
+        self.tabWidget.setGeometry(QRect(0, 20, 581, 646))
         palette = QPalette()
         brush = QBrush(QColor(225, 225, 225, 255))
         brush.setStyle(Qt.SolidPattern)
@@ -92,7 +92,7 @@ class Ui_MainWindow(object):
         self.source_UID.setFrame(True)
         self.slave_Response = QLabel(self.RDM_tab)
         self.slave_Response.setObjectName(u"slave_Response")
-        self.slave_Response.setGeometry(QRect(10, 510, 561, 31))
+        self.slave_Response.setGeometry(QRect(10, 510, 561, 91))
         self.slave_Response.setAutoFillBackground(True)
         self.UID_label = QLabel(self.RDM_tab)
         self.UID_label.setObjectName(u"UID_label")
@@ -886,7 +886,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         self.refreshPorts.setDefault(False)
 
 

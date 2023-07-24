@@ -367,10 +367,42 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
 
         # Faz o recebimento dos dados RDM
         receive = serialComunication.read(300)
-        #print(receive)
+        #self.responseProcess(receive)
 
-        self.slave_Response.setText(str(receive))
+        # Ajusta os dados recebidos para exibir na tela
+        checksum = 0
+        if (len(receive) > 0) and (receive[0] == 0xFE):
+            # Processa frame de resposta a um Disc_unique_branch
+            string_receive = str(len(receive)) + " bytes - "
+            for i in range(len(receive)):
+                string_receive = string_receive + f"{receive[i]:0{2}X}" + " "
+                if i > 7 and i < 20:
+                    checksum = checksum + receive[i]
+
+            # Faz a decodificacao dos dados
+            decodeData = [0, 0, 0, 0, 0, 0, 0, 0]
+            decodeData[0] = receive[8] & receive[9]
+            decodeData[1] = receive[10] & receive[11]
+            decodeData[2] = receive[12] & receive[13]
+            decodeData[3] = receive[14] & receive[15]
+            decodeData[4] = receive[16] & receive[17]
+            decodeData[5] = receive[18] & receive[19]
+            decodeData[6] = receive[20] & receive[21]
+            decodeData[7] = receive[22] & receive[23]
+
+            string_receive = string_receive + "\nDados decodificados: "
+            for i in range(8):
+                string_receive = string_receive + f"{decodeData[i]:0{2}X}" + " "
+            
+            string_receive = string_receive + "\nChecksum: " + f"{checksum:0{2}X}"
+
+            # Exibe os dados recebidos na tela
+            self.slave_Response.setText(string_receive)
+
+
         serialComunication.close()
+        
+    #def responseProcess(self, receive):
         
 
     def clearAddParam(self):
