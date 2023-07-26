@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>580</width>
-    <height>695</height>
+    <height>697</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -181,22 +181,6 @@
       </property>
       <property name="frame">
        <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QLabel" name="slave_Response">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>510</y>
-        <width>561</width>
-        <height>91</height>
-       </rect>
-      </property>
-      <property name="autoFillBackground">
-       <bool>true</bool>
-      </property>
-      <property name="text">
-       <string/>
       </property>
      </widget>
      <widget class="QLabel" name="UID_label">
@@ -2289,6 +2273,16 @@
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="slaveResponse">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>515</y>
+        <width>561</width>
+        <height>106</height>
+       </rect>
       </property>
      </widget>
     </widget>

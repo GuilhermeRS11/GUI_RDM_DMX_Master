@@ -354,6 +354,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         global command2send
         global serialComunication
         
+        """
         serialComunication.close()
         serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
                            bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
@@ -361,24 +362,36 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         # Faz o envio dos dados RDM, byte a byte
         for i in range(command2send[2] + 2):
             serialComunication.write(command2send[i].to_bytes(1, byteorder='big'))
-            #print(command2send[i].to_bytes(1, byteorder='big'))
-        
+        """
         print("Comando RDM enviado")
 
         # Faz o recebimento dos dados RDM
-        receive = serialComunication.read(300)
-        #self.responseProcess(receive)
-
-        # Ajusta os dados recebidos para exibir na tela
+        #receive = serialComunication.read(300)
+        receive = [0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xaa, 0xba, 0x57, 0xbe, 0x75, 0xfe, 0x57, 0xfa, 0x7d, 0xba, 0xdf, 0xbe, 0xfd, 0xaa, 0x5d, 0xee, 0x75]
+        self.responseProcess(receive)
+        
+        #serialComunication.close()
+        
+    def responseProcess(self, receive):
+        # Ajusta os dados recebidos para exibir na tela 
         checksum = 0
+        self.slaveResponse.clear()
+
+        # Processa frame de resposta a um Disc_unique_branch
         if (len(receive) > 0) and (receive[0] == 0xFE):
-            # Processa frame de resposta a um Disc_unique_branch
-            string_receive = str(len(receive)) + " bytes - "
+            string_receive = "Frame recebido: "
             for i in range(len(receive)):
                 string_receive = string_receive + f"{receive[i]:0{2}X}" + " "
                 if i > 7 and i < 20:
                     checksum = checksum + receive[i]
 
+            # Exibe o frame recebido
+            self.slaveResponse.addItem(string_receive)
+
+            # Exibe o numero de bytes recebidos
+            string_receive = "Numero de bytes recebidos: " + str(len(receive))
+            self.slaveResponse.addItem(string_receive)
+            
             # Faz a decodificacao dos dados
             decodeData = [0, 0, 0, 0, 0, 0, 0, 0]
             decodeData[0] = receive[8] & receive[9]
@@ -390,20 +403,30 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
             decodeData[6] = receive[20] & receive[21]
             decodeData[7] = receive[22] & receive[23]
 
-            string_receive = string_receive + "\nDados decodificados: "
+            string_receive = "Dados decodificados: "
             for i in range(8):
                 string_receive = string_receive + f"{decodeData[i]:0{2}X}" + " "
             
-            string_receive = string_receive + "\nChecksum: " + f"{checksum:0{2}X}"
+            # Exibe os dados decodificados
+            self.slaveResponse.addItem(string_receive)
 
-            # Exibe os dados recebidos na tela
-            self.slave_Response.setText(string_receive)
+            if ((decodeData[6] << 8) | decodeData[7]) == checksum:
+                string_receive = "Checksum: OK"
+            else:
+                string_receive = "Checksum: ERROR"
+            
+            # Exibe o resultado do checksum
+            self.slaveResponse.addItem(string_receive)
+
+            string_receive = "UID: "
+            for i in range(6):
+                string_receive = string_receive + f"{decodeData[i]:0{2}X}" + " "
+
+            # Exibe o UID   
+            self.slaveResponse.addItem(string_receive)
 
 
-        serialComunication.close()
-        
-    #def responseProcess(self, receive):
-        
+            
 
     def clearAddParam(self):
         self.add_param_1.setText("")
