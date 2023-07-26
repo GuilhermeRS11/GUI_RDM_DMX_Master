@@ -367,18 +367,28 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
 
         # Faz o recebimento dos dados RDM
         #receive = serialComunication.read(300)
-        receive = [0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xaa, 0xba, 0x57, 0xbe, 0x75, 0xfe, 0x57, 0xfa, 0x7d, 0xba, 0xdf, 0xbe, 0xfd, 0xaa, 0x5d, 0xee, 0x75]
+
+        # Testa o recebimento de um frame de resposta a um Disc_unique_branch
+        #receive = [0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xaa, 0xba, 0x57, 0xbe, 0x75, 0xfe, 0x57, 0xfa, 0x7d, 0xba, 0xdf, 0xbe, 0xfd, 0xaa, 0x5d, 0xee, 0x75]
+
+        # testa o recebimento de um frame de resposta a um RDM padrao
+        receive = [0xcc, 0x01, 0x19, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xcb, 0xa9, 0x87, 0x65, 0x43, 0x21, 0x00, 0x01, 0x00, 0x00, 0x00, 0x20, 0x00, 0x30, 0x01, 0x04, 0x06, 0x6a]
         self.responseProcess(receive)
         
         #serialComunication.close()
         
     def responseProcess(self, receive):
         # Ajusta os dados recebidos para exibir na tela 
-        checksum = 0
         self.slaveResponse.clear()
 
+        if(len(receive) == 0):
+        # Informa que nada foi recebido
+            self.slaveResponse.addItem("Nenhum dado recebido")
+            return
+        
+        elif receive[0] == 0xFE:
         # Processa frame de resposta a um Disc_unique_branch
-        if (len(receive) > 0) and (receive[0] == 0xFE):
+            checksum = 0
             string_receive = "Frame recebido: "
             for i in range(len(receive)):
                 string_receive = string_receive + f"{receive[i]:0{2}X}" + " "
@@ -424,6 +434,81 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
 
             # Exibe o UID   
             self.slaveResponse.addItem(string_receive)
+
+        elif receive[0] == 0xCC:
+            checksum = 0
+            string_receive = "Frame recebido: "
+            frameSize = len(receive)
+
+            for i in range(frameSize):
+                string_receive = string_receive + f"{receive[i]:0{2}X}" + " "
+                if (i % 27 == 0) and (i != 0): 
+                    # Separa a linha quando tem mais de 27 elementos
+                    self.slaveResponse.addItem(string_receive)
+                    string_receive = "                           "
+
+                if i < frameSize - 2:
+                    # Calcula o checksum
+                    checksum = checksum + receive[i]
+
+            # Exibe o frame recebido
+            self.slaveResponse.addItem(string_receive)
+
+            # Exibe o numero de bytes recebidos
+            string_receive = "Numero de bytes recebidos: " + str(frameSize)
+            self.slaveResponse.addItem(string_receive)
+
+            # Exibe o resultado do tamanho do frame
+            if frameSize == receive[2] + 2:
+                string_receive = "Tamanho do frame: OK"
+            else:
+                string_receive = "Tamanho do frame: ERROR"
+
+            self.slaveResponse.addItem(string_receive)
+
+            # Exibe o resultado do checksum
+            if ((receive[frameSize - 2] << 8) | receive[frameSize - 1]) == checksum:
+                string_receive = "Checksum: OK"
+            else:
+                string_receive = "Checksum: ERROR"
+
+            self.slaveResponse.addItem(string_receive)
+
+            # Exibe o UID
+            string_receive = "UID: "
+            for i in range(6):
+                string_receive = string_receive + f"{receive[i + 9]:0{2}X}" + " "
+
+            self.slaveResponse.addItem(string_receive)
+
+            # Exibe o tipo de resposta
+            if receive[16] == 0x00:
+                string_receive = "Tipo de resposta: ACK"
+            elif receive[16] == 0x01:
+                string_receive = "Tipo de resposta: ACK_TIMER"
+            elif receive[16] == 0x02:
+                string_receive = "Tipo de resposta: NACK_REASON"
+            elif receive[16] == 0x03:
+                string_receive = "Tipo de resposta: ACK_OVERFLOW"
+
+            self.slaveResponse.addItem(string_receive)
+
+            # Exibe o tamanho do PD
+            pdSize = receive[23]
+            string_receive = "Tamanho do PD: " + str(pdSize)
+            
+            self.slaveResponse.addItem(string_receive)
+
+            # Exibe o PD
+            string_receive = "Parameter Data: "
+            for i in range(pdSize):
+                string_receive = string_receive + f"{receive[frameSize - 2 - pdSize + i]:0{2}X}" + " "
+                if (i % 27 == 0) and (i != 0): 
+                    # Separa a linha quando tem mais de 27 elementos
+                    self.slaveResponse.addItem(string_receive)
+                    string_receive = "                           "
+
+            self.slaveResponse.addItem(string_receive)            
 
 
             

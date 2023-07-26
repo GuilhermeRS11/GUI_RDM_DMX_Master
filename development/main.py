@@ -18,3 +18,6 @@ window.SendCommand()
 # Colocar dicas quando passar o mouse por cima dos campos RDM
 
 # Fazer tratamento das outras respostas do RDM
+
+# Adaptar exibição de resposta. Criar elemento visoal que altera cor ou texto
+# Com isso, se cliar ou passar mouse por cima ele diz pq deu errado ou certo
