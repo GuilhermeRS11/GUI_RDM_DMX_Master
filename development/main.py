@@ -19,5 +19,9 @@ window.SendCommand()
 
 # Fazer tratamento das outras respostas do RDM
 
-# Adaptar exibição de resposta. Criar elemento visoal que altera cor ou texto
+# Adaptar exibição de resposta. Criar elemento visual que altera cor ou texto
 # Com isso, se cliar ou passar mouse por cima ele diz pq deu errado ou certo
+
+# Ajustar Checksum. Não estou calculando do jeito certo
+
+# Ver se precisa decodificar os outros campos dos pacotes RDM. Ex: dados vindos do device_info

@@ -354,7 +354,6 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         global command2send
         global serialComunication
         
-        """
         serialComunication.close()
         serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
                            bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
@@ -362,20 +361,20 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         # Faz o envio dos dados RDM, byte a byte
         for i in range(command2send[2] + 2):
             serialComunication.write(command2send[i].to_bytes(1, byteorder='big'))
-        """
+
         print("Comando RDM enviado")
 
         # Faz o recebimento dos dados RDM
-        #receive = serialComunication.read(300)
+        receive = serialComunication.read(300)
 
         # Testa o recebimento de um frame de resposta a um Disc_unique_branch
         #receive = [0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xaa, 0xba, 0x57, 0xbe, 0x75, 0xfe, 0x57, 0xfa, 0x7d, 0xba, 0xdf, 0xbe, 0xfd, 0xaa, 0x5d, 0xee, 0x75]
 
-        # testa o recebimento de um frame de resposta a um RDM padrao
-        receive = [0xcc, 0x01, 0x19, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xcb, 0xa9, 0x87, 0x65, 0x43, 0x21, 0x00, 0x01, 0x00, 0x00, 0x00, 0x20, 0x00, 0x30, 0x01, 0x04, 0x06, 0x6a]
+        # Testa o recebimento de um frame de resposta a um RDM padrao
+        #receive = [0xcc, 0x01, 0x19, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xcb, 0xa9, 0x87, 0x65, 0x43, 0x21, 0x00, 0x01, 0x00, 0x00, 0x00, 0x20, 0x00, 0x30, 0x01, 0x04, 0x06, 0x6a]
         self.responseProcess(receive)
         
-        #serialComunication.close()
+        serialComunication.close()
         
     def responseProcess(self, receive):
         # Ajusta os dados recebidos para exibir na tela 
@@ -394,6 +393,8 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                 string_receive = string_receive + f"{receive[i]:0{2}X}" + " "
                 if i > 7 and i < 20:
                     checksum = checksum + receive[i]
+            
+            
 
             # Exibe o frame recebido
             self.slaveResponse.addItem(string_receive)
@@ -420,6 +421,8 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
             # Exibe os dados decodificados
             self.slaveResponse.addItem(string_receive)
 
+            #print(checksum)
+            #print(((decodeData[6] << 8) | decodeData[7]))
             if ((decodeData[6] << 8) | decodeData[7]) == checksum:
                 string_receive = "Checksum: OK"
             else:
