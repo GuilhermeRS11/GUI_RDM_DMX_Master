@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QMainWindow
 from PySide6.QtCore import Qt
 from RDM_DMX_Master_ui import Ui_MainWindow
 from ast import literal_eval
@@ -14,7 +14,7 @@ command2send = []
 DMX_frame = []
 serialComunication = serial.Serial(baudrate=250000, bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
-class RDM_DMX_Master(QWidget, Ui_MainWindow):
+class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
     def __init__(self, app):
         super().__init__()
         self.setupUi(self)
@@ -30,11 +30,12 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
             Flag_just_once = False
             Auto_DMX_send = False
     
-            self.Slots_per_link.setValue(513)  # Inicializa o numero de slots por link com o valor 513
+            self.Slots_per_link.setValue(256)  # Inicializa o numero de slots por link com o valor 513
             self.serialFindPorts()             # Faz a primeira busca pelas portas serial do sistema
             self.caixaCommand()                # Atualiza os campos de exibicao com os valores zerados
             self.rgbSlider()                   # Atualiza os valores das cores atraves da posicao inicial do slider rgb
             self.assembleDMX()                 # Atualiza o comando a ser enviado no DMX   
+            self.red_dmx_box.setValue(255)    # Inicializa a caixa de texto com o valor coerente
                    
 
 
@@ -511,10 +512,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                     self.slaveResponse.addItem(string_receive)
                     string_receive = "                           "
 
-            self.slaveResponse.addItem(string_receive)            
-
-
-            
+            self.slaveResponse.addItem(string_receive)                        
 
     def clearAddParam(self):
         self.add_param_1.setText("")
@@ -615,9 +613,6 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.green_dmx_slider.setValue(self.green_dmx_box.value())
 
     def rgbSlider(self):
-        #blue = self.blue_dmx_box.value()
-        #red = self.red_dmx_box.value()
-        #green = self.green_dmx_box.value()
         rgb = self.RGB_dmx_slider.value()
 
         if rgb < 255:

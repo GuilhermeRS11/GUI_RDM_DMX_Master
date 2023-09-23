@@ -8,7 +8,7 @@ window = RDM_DMX_Master(app)
 window.show()
 
 app.exec()
-window.SendCommand()
+#window.SendCommand() A principio não precisa disso. Testar
 
 # Encontrar as portas serial disponiveis causa travamento. Pq sera?
 
