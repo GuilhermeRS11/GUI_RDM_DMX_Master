@@ -164,7 +164,7 @@ class Ui_MainWindow(object):
         self.command_1.setFont(font3)
         self.command_1.setCursor(QCursor(Qt.IBeamCursor))
         self.command_1.setMouseTracking(True)
-        self.command_1.setToolTipDuration(1)
+        self.command_1.setToolTipDuration(-1)
         self.command_1.setLayoutDirection(Qt.LeftToRight)
         self.command_1.setReadOnly(True)
         self.command_2 = QLineEdit(self.RDM_tab)
@@ -913,7 +913,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         self.refreshPorts.setDefault(False)
 
 

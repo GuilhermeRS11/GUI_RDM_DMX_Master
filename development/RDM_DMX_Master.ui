@@ -99,7 +99,7 @@
      <enum>QTabWidget::North</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="RDM_tab">
      <attribute name="title">
@@ -469,13 +469,13 @@
        <bool>true</bool>
       </property>
       <property name="toolTip">
-       <string extracomment="Código referente a comando RDM"/>
+       <string/>
       </property>
       <property name="toolTipDuration">
-       <number>1</number>
+       <number>-1</number>
       </property>
       <property name="statusTip">
-       <string extracomment="oiii"/>
+       <string/>
       </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
