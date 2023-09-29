@@ -23,3 +23,13 @@ app.exec()
 # Acho que o escravo da china que esta com defeito
 
 # Ver se precisa decodificar os outros campos dos pacotes RDM. Ex: dados vindos do device_info
+
+# Encontrar as portas serial disponiveis causa travamento. Pq sera?
+
+# Descobrir se é necessário que uma luminaria com mais de uma cor tenha seu inicio em um slot especifico. Divisivel por 4 por exemplo
+# Também descobrir se há uma sequencia de cores que deve ser seguida
+
+# Fazer envio dos dados em um unico comando de serial. Isso faz com que não tenha atraso entre um byte e outro
+
+# Modificar o campo UID. Dizer se é source ou destino. 
+# Modificar o parameterData para dizer o que é. Especialmente no GET DMX Address
