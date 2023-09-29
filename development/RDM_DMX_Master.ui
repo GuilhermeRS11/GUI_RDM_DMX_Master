@@ -7,21 +7,36 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>580</width>
+    <width>581</width>
     <height>697</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>581</width>
+    <height>697</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>581</width>
+    <height>697</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
-      <y>20</y>
-      <width>581</width>
-      <height>646</height>
+      <y>0</y>
+      <width>586</width>
+      <height>671</height>
      </rect>
     </property>
     <property name="palette">
@@ -56,13 +71,32 @@
       <pointsize>9</pointsize>
      </font>
     </property>
+    <property name="mouseTracking">
+     <bool>false</bool>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::TabFocus</enum>
+    </property>
+    <property name="toolTip">
+     <string/>
+    </property>
+    <property name="toolTipDuration">
+     <number>1</number>
+    </property>
+    <property name="statusTip">
+     <string/>
+    </property>
     <property name="autoFillBackground">
      <bool>true</bool>
     </property>
     <property name="styleSheet">
      <string notr="true">tabWidget {
-    background-color: rgb(232, 232, 232);
-}</string>
+    background-color: rgb(232, 232, 232);	
+}
+</string>
+    </property>
+    <property name="tabPosition">
+     <enum>QTabWidget::North</enum>
     </property>
     <property name="currentIndex">
      <number>0</number>
@@ -75,7 +109,7 @@
       <property name="geometry">
        <rect>
         <x>225</x>
-        <y>490</y>
+        <y>485</y>
         <width>111</width>
         <height>20</height>
        </rect>
@@ -427,6 +461,21 @@
        <font>
         <pointsize>10</pointsize>
        </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>IBeamCursor</cursorShape>
+      </property>
+      <property name="mouseTracking">
+       <bool>true</bool>
+      </property>
+      <property name="toolTip">
+       <string/>
+      </property>
+      <property name="toolTipDuration">
+       <number>-1</number>
+      </property>
+      <property name="statusTip">
+       <string/>
       </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
@@ -2278,15 +2327,30 @@
      <widget class="QListWidget" name="slaveResponse">
       <property name="geometry">
        <rect>
-        <x>5</x>
-        <y>515</y>
+        <x>10</x>
+        <y>510</y>
         <width>561</width>
-        <height>106</height>
+        <height>116</height>
        </rect>
       </property>
      </widget>
     </widget>
     <widget class="QWidget" name="DMX_tab">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="cursor">
+      <cursorShape>ArrowCursor</cursorShape>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
      <attribute name="title">
       <string>Modo DMX</string>
      </attribute>
@@ -2326,7 +2390,7 @@
       <property name="geometry">
        <rect>
         <x>230</x>
-        <y>495</y>
+        <y>505</y>
         <width>121</width>
         <height>24</height>
        </rect>
@@ -2506,6 +2570,9 @@
         <height>51</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>OpenHandCursor</cursorShape>
+      </property>
       <property name="styleSheet">
        <string notr="true">QSlider::handle:vertical{
 	height: 4px;
@@ -2533,6 +2600,9 @@
         <height>51</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>OpenHandCursor</cursorShape>
+      </property>
       <property name="styleSheet">
        <string notr="true">QSlider::handle:vertical{
 	height: 4px;
@@ -2559,6 +2629,9 @@
         <width>18</width>
         <height>51</height>
        </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>OpenHandCursor</cursorShape>
       </property>
       <property name="styleSheet">
        <string notr="true">QSlider::handle:vertical{
@@ -2590,6 +2663,9 @@
         <height>51</height>
        </rect>
       </property>
+      <property name="cursor">
+       <cursorShape>OpenHandCursor</cursorShape>
+      </property>
       <property name="styleSheet">
        <string notr="true">QSlider::handle:vertical{
 	height: 4px;
@@ -2616,6 +2692,12 @@
         <width>476</width>
         <height>26</height>
        </rect>
+      </property>
+      <property name="cursor">
+       <cursorShape>OpenHandCursor</cursorShape>
+      </property>
+      <property name="mouseTracking">
+       <bool>false</bool>
       </property>
       <property name="layoutDirection">
        <enum>Qt::LeftToRight</enum>
@@ -2654,8 +2736,8 @@ QSlider::groove:horizontal
      <widget class="QCheckBox" name="autoSend_dmx_command">
       <property name="geometry">
        <rect>
-        <x>220</x>
-        <y>515</y>
+        <x>215</x>
+        <y>530</y>
         <width>151</width>
         <height>26</height>
        </rect>
@@ -2712,8 +2794,8 @@ QSlider::groove:horizontal
      <widget class="QLabel" name="label_15">
       <property name="geometry">
        <rect>
-        <x>200</x>
-        <y>330</y>
+        <x>180</x>
+        <y>340</y>
         <width>206</width>
         <height>16</height>
        </rect>
@@ -2749,20 +2831,23 @@ QSlider::groove:horizontal
      <widget class="QListWidget" name="DMX_command_label">
       <property name="geometry">
        <rect>
-        <x>15</x>
-        <y>355</y>
-        <width>541</width>
-        <height>131</height>
+        <x>10</x>
+        <y>365</y>
+        <width>556</width>
+        <height>126</height>
        </rect>
       </property>
       <property name="font">
        <font>
+        <family>DIALux Report Font</family>
         <pointsize>8</pointsize>
+        <italic>false</italic>
+        <bold>false</bold>
        </font>
       </property>
       <item>
        <property name="text">
-        <string>000 -  00 00 00 00 00 00 00 00 00 00 00 00 AD 2A 00 AA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00</string>
+        <string>000 - 00 00 00 00 00 00 00 00 00 00 00 00 AD 2A 00 AA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00</string>
        </property>
       </item>
      </widget>
@@ -2790,7 +2875,7 @@ QSlider::groove:horizontal
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>580</width>
+     <width>581</width>
      <height>22</height>
     </rect>
    </property>

@@ -8,14 +8,11 @@ window = RDM_DMX_Master(app)
 window.show()
 
 app.exec()
-window.SendCommand()
 
 # Encontrar as portas serial disponiveis causa travamento. Pq sera?
 
 # Descobrir se é necessário que uma luminaria com mais de uma cor tenha seu inicio em um slot especifico. Divisivel por 4 por exemplo
 # Também descobrir se há uma sequencia de cores que deve ser seguida
-
-# Colocar dicas quando passar o mouse por cima dos campos RDM
 
 # Fazer tratamento das outras respostas do RDM
 
@@ -23,6 +20,7 @@ window.SendCommand()
 # Com isso, se cliar ou passar mouse por cima ele diz pq deu errado ou certo
 
 # Ajustar Checksum. Não estou calculando do jeito certo
+# Acho que o escravo da china que esta com defeito
 
 # Ver se precisa decodificar os outros campos dos pacotes RDM. Ex: dados vindos do device_info
 

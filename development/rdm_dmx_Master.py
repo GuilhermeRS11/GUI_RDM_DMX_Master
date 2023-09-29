@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QMainWindow
 from PySide6.QtCore import Qt
 from RDM_DMX_Master_ui import Ui_MainWindow
 from ast import literal_eval
@@ -14,7 +14,7 @@ command2send = []
 DMX_frame = []
 serialComunication = serial.Serial(baudrate=250000, bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
-class RDM_DMX_Master(QWidget, Ui_MainWindow):
+class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
     def __init__(self, app):
         super().__init__()
         self.setupUi(self)
@@ -30,11 +30,12 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
             Flag_just_once = False
             Auto_DMX_send = False
     
-            self.Slots_per_link.setValue(513)  # Inicializa o numero de slots por link com o valor 513
+            self.Slots_per_link.setValue(256)  # Inicializa o numero de slots por link com o valor 513
             self.serialFindPorts()             # Faz a primeira busca pelas portas serial do sistema
             self.caixaCommand()                # Atualiza os campos de exibicao com os valores zerados
             self.rgbSlider()                   # Atualiza os valores das cores atraves da posicao inicial do slider rgb
             self.assembleDMX()                 # Atualiza o comando a ser enviado no DMX   
+            self.red_dmx_box.setValue(255)     # Inicializa a caixa de texto com o valor coerente
                    
 
 
@@ -334,6 +335,65 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
             self.command_37.setText(f"{command2send[36]:0{2}X}")
             self.command_38.setText(f"{command2send[37]:0{2}X}")
 
+        # Define as tooltips de cada caixa de texto
+        self.command_1.setToolTip("Start code")
+        self.command_2.setToolTip("Sub Start code")
+        self.command_3.setToolTip("Message Length")
+        self.command_4.setToolTip("Destination UID byte 5")
+        self.command_5.setToolTip("Destination UID byte 4")
+        self.command_6.setToolTip("Destination UID byte 3")
+        self.command_7.setToolTip("Destination UID byte 2")
+        self.command_8.setToolTip("Destination UID byte 1")
+        self.command_9.setToolTip("Destination UID byte 0")
+        self.command_10.setToolTip("Source UID byte 5")
+        self.command_11.setToolTip("Source UID byte 4")
+        self.command_12.setToolTip("Source UID byte 3")
+        self.command_13.setToolTip("Source UID byte 2")
+        self.command_14.setToolTip("Source UID byte 1")
+        self.command_15.setToolTip("Source UID byte 0")
+        self.command_16.setToolTip("Transaction Number")
+        self.command_17.setToolTip("Port ID / Response Type")
+        self.command_18.setToolTip("Message Count")
+        self.command_19.setToolTip("Sub Device byte 1")
+        self.command_20.setToolTip("Sub Device byte 0")
+        self.command_21.setToolTip("Command Class")
+        self.command_22.setToolTip("Parameter ID byte 1")
+        self.command_23.setToolTip("Parameter ID byte 0")
+        self.command_24.setToolTip("Parameter Data Length")
+                
+        if command_len == 26:
+            self.command_25.setToolTip("Checksum High")
+            self.command_26.setToolTip("Checksum Low")
+        
+        if command_len == 27:
+            self.command_25.setToolTip("Parameter Data")
+            self.command_26.setToolTip("Checksum High")
+            self.command_27.setToolTip("Checksum Low")
+
+        if command_len == 28:
+            self.command_25.setToolTip("Parameter Data byte 1")
+            self.command_26.setToolTip("Parameter Data byte 0")
+            self.command_27.setToolTip("Checksum High")
+            self.command_28.setToolTip("Checksum Low")
+
+        if command_len == 38:
+            self.command_25.setToolTip("Parameter Data byte 11")
+            self.command_26.setToolTip("Parameter Data byte 10")
+            self.command_27.setToolTip("Parameter Data byte 9")
+            self.command_28.setToolTip("Parameter Data byte 8")
+            self.command_29.setToolTip("Parameter Data byte 7")
+            self.command_30.setToolTip("Parameter Data byte 6")
+            self.command_31.setToolTip("Parameter Data byte 5")
+            self.command_32.setToolTip("Parameter Data byte 4")
+            self.command_33.setToolTip("Parameter Data byte 3")
+            self.command_34.setToolTip("Parameter Data byte 2")
+            self.command_35.setToolTip("Parameter Data byte 1")
+            self.command_36.setToolTip("Parameter Data byte 0")
+            self.command_37.setToolTip("Checksum High")
+            self.command_38.setToolTip("Checksum Low")
+
+    
+
     def clearBoxes(self):
         self.command_25.setText(" ")
         self.command_26.setText(" ")
@@ -350,6 +410,22 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.command_37.setText(" ")
         self.command_38.setText(" ")
 
+        self.command_24.setToolTip(" ")
+        self.command_25.setToolTip(" ")
+        self.command_26.setToolTip(" ")
+        self.command_27.setToolTip(" ")
+        self.command_28.setToolTip(" ")
+        self.command_29.setToolTip(" ")
+        self.command_30.setToolTip(" ")
+        self.command_31.setToolTip(" ")
+        self.command_32.setToolTip(" ")
+        self.command_33.setToolTip(" ")
+        self.command_34.setToolTip(" ")
+        self.command_35.setToolTip(" ")
+        self.command_36.setToolTip(" ")
+        self.command_37.setToolTip(" ")
+        self.command_38.setToolTip(" ")
+        
     def SendCommand(self):
         global command2send
         global serialComunication
@@ -511,10 +587,7 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
                     self.slaveResponse.addItem(string_receive)
                     string_receive = "                           "
 
-            self.slaveResponse.addItem(string_receive)            
-
-
-            
+            self.slaveResponse.addItem(string_receive)                        
 
     def clearAddParam(self):
         self.add_param_1.setText("")
@@ -615,9 +688,6 @@ class RDM_DMX_Master(QWidget, Ui_MainWindow):
         self.green_dmx_slider.setValue(self.green_dmx_box.value())
 
     def rgbSlider(self):
-        #blue = self.blue_dmx_box.value()
-        #red = self.red_dmx_box.value()
-        #green = self.green_dmx_box.value()
         rgb = self.RGB_dmx_slider.value()
 
         if rgb < 255:
