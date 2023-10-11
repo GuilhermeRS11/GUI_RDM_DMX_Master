@@ -434,9 +434,8 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
                            bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
         
-        # Faz o envio dos dados RDM, byte a byte
-        for i in range(command2send[2] + 2):
-            serialComunication.write(command2send[i].to_bytes(1, byteorder='big'))
+        # Faz o envio dos dados RDM
+        serialComunication.write(bytes(command2send))
 
         print("Comando RDM enviado")
 
@@ -469,8 +468,6 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                 string_receive = string_receive + f"{receive[i]:0{2}X}" + " "
                 if i > 7 and i < 20:
                     checksum = checksum + receive[i]
-            
-            
 
             # Exibe o frame recebido
             self.slaveResponse.addItem(string_receive)
@@ -507,7 +504,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             # Exibe o resultado do checksum
             self.slaveResponse.addItem(string_receive)
 
-            string_receive = "UID: "
+            string_receive = "Source UID: "
             for i in range(6):
                 string_receive = string_receive + f"{decodeData[i]:0{2}X}" + " "
 
@@ -554,7 +551,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.slaveResponse.addItem(string_receive)
 
             # Exibe o UID
-            string_receive = "UID: "
+            string_receive = "Source UID: "
             for i in range(6):
                 string_receive = string_receive + f"{receive[i + 9]:0{2}X}" + " "
 
@@ -579,6 +576,10 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.slaveResponse.addItem(string_receive)
 
             # Exibe o PD
+            #if (receive[20] == 0x21) and (receive[21] == 0x00):
+                #string_receive = "Endereço DMX: "
+            #else:    
+                #string_receive = "Parameter Data: "
             string_receive = "Parameter Data: "
             for i in range(pdSize):
                 string_receive = string_receive + f"{receive[frameSize - 2 - pdSize + i]:0{2}X}" + " "
@@ -760,14 +761,16 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                 self.last_dmx_command_time = current_time
 
     def sendDMXcommand(self): 
-        # Envia frame DMX por serial. Pode ser que seja necessáio despeitar os tempos
+        # Envia frame DMX por serial. Pode ser que seja necessário desconsiderar os tempos
         global serialComunication
 
         serialComunication.close()
-        serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
-                                           bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
-        for i in range(Slots_per_link):
-            serialComunication.write(DMX_frame[i].to_bytes(1, byteorder='big'))
+        serialComunication = serial.Serial(port=self.serialPort.currentText(), baudrate=250000,
+                                        bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
+        
+        # Converte a lista DMX_frame em bytes e envia tudo de uma vez
+        serialComunication.write(bytes(DMX_frame))
+        
         serialComunication.close()
         print("Comando DMX enviado")
 
