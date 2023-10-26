@@ -16,20 +16,12 @@ app.exec()
 
 # Fazer tratamento das outras respostas do RDM
 
-# Adaptar exibição de resposta. Criar elemento visual que altera cor ou texto
-# Com isso, se cliar ou passar mouse por cima ele diz pq deu errado ou certo
-
 # Ajustar Checksum. Não estou calculando do jeito certo
 # Acho que o escravo da china que esta com defeito
 
 # Ver se precisa decodificar os outros campos dos pacotes RDM. Ex: dados vindos do device_info
 
-# Encontrar as portas serial disponiveis causa travamento. Pq sera?
-
-# Descobrir se é necessário que uma luminaria com mais de uma cor tenha seu inicio em um slot especifico. Divisivel por 4 por exemplo
-# Também descobrir se há uma sequencia de cores que deve ser seguida
-
-# Fazer envio dos dados em um unico comando de serial. Isso faz com que não tenha atraso entre um byte e outro
-
 # Modificar o campo UID. Dizer se é source ou destino. 
 # Modificar o parameterData para dizer o que é. Especialmente no GET DMX Address
+
+# Verificar a causa no atraso do envio de dados seriais 

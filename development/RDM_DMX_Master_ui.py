@@ -649,33 +649,33 @@ class Ui_MainWindow(object):
         self.DMX_tab.setLayoutDirection(Qt.LeftToRight)
         self.label_14 = QLabel(self.DMX_tab)
         self.label_14.setObjectName(u"label_14")
-        self.label_14.setGeometry(QRect(325, 220, 46, 20))
+        self.label_14.setGeometry(QRect(375, 230, 46, 20))
         font4 = QFont()
         font4.setPointSize(9)
         font4.setBold(False)
         self.label_14.setFont(font4)
         self.blue_dmx_box = QSpinBox(self.DMX_tab)
         self.blue_dmx_box.setObjectName(u"blue_dmx_box")
-        self.blue_dmx_box.setGeometry(QRect(390, 150, 46, 22))
+        self.blue_dmx_box.setGeometry(QRect(440, 150, 46, 22))
         self.blue_dmx_box.setMaximum(255)
         self.send_command_dmx = QPushButton(self.DMX_tab)
         self.send_command_dmx.setObjectName(u"send_command_dmx")
-        self.send_command_dmx.setGeometry(QRect(230, 505, 121, 24))
+        self.send_command_dmx.setGeometry(QRect(230, 570, 121, 24))
         self.green_dmx_box = QSpinBox(self.DMX_tab)
         self.green_dmx_box.setObjectName(u"green_dmx_box")
-        self.green_dmx_box.setGeometry(QRect(390, 220, 46, 22))
+        self.green_dmx_box.setGeometry(QRect(440, 230, 46, 22))
         self.green_dmx_box.setMaximum(255)
         self.red_dmx_box = QSpinBox(self.DMX_tab)
         self.red_dmx_box.setObjectName(u"red_dmx_box")
-        self.red_dmx_box.setGeometry(QRect(165, 215, 46, 22))
+        self.red_dmx_box.setGeometry(QRect(245, 225, 46, 22))
         self.red_dmx_box.setMaximum(255)
         self.label_7 = QLabel(self.DMX_tab)
         self.label_7.setObjectName(u"label_7")
-        self.label_7.setGeometry(QRect(335, 150, 36, 20))
+        self.label_7.setGeometry(QRect(385, 150, 36, 20))
         self.label_7.setFont(font4)
         self.label_16 = QLabel(self.DMX_tab)
         self.label_16.setObjectName(u"label_16")
-        self.label_16.setGeometry(QRect(85, 145, 61, 31))
+        self.label_16.setGeometry(QRect(165, 145, 61, 31))
         self.label_16.setFont(font4)
         self.DMX_address = QLineEdit(self.DMX_tab)
         self.DMX_address.setObjectName(u"DMX_address")
@@ -690,11 +690,11 @@ class Ui_MainWindow(object):
         self.label_17.setFont(font1)
         self.label_18 = QLabel(self.DMX_tab)
         self.label_18.setObjectName(u"label_18")
-        self.label_18.setGeometry(QRect(75, 205, 71, 36))
+        self.label_18.setGeometry(QRect(155, 220, 71, 36))
         self.label_18.setFont(font4)
         self.white_dmx_box = QSpinBox(self.DMX_tab)
         self.white_dmx_box.setObjectName(u"white_dmx_box")
-        self.white_dmx_box.setGeometry(QRect(165, 150, 46, 22))
+        self.white_dmx_box.setGeometry(QRect(245, 150, 46, 22))
         self.white_dmx_box.setMaximum(255)
         self.label_19 = QLabel(self.DMX_tab)
         self.label_19.setObjectName(u"label_19")
@@ -702,7 +702,7 @@ class Ui_MainWindow(object):
         self.label_19.setFont(font2)
         self.white_dmx_slider = QSlider(self.DMX_tab)
         self.white_dmx_slider.setObjectName(u"white_dmx_slider")
-        self.white_dmx_slider.setGeometry(QRect(225, 135, 18, 51))
+        self.white_dmx_slider.setGeometry(QRect(305, 135, 18, 51))
         self.white_dmx_slider.setCursor(QCursor(Qt.OpenHandCursor))
         self.white_dmx_slider.setStyleSheet(u"QSlider::handle:vertical{\n"
 "	height: 4px;\n"
@@ -717,7 +717,7 @@ class Ui_MainWindow(object):
         self.white_dmx_slider.setOrientation(Qt.Vertical)
         self.green_dmx_slider = QSlider(self.DMX_tab)
         self.green_dmx_slider.setObjectName(u"green_dmx_slider")
-        self.green_dmx_slider.setGeometry(QRect(450, 205, 18, 51))
+        self.green_dmx_slider.setGeometry(QRect(500, 210, 18, 51))
         self.green_dmx_slider.setCursor(QCursor(Qt.OpenHandCursor))
         self.green_dmx_slider.setStyleSheet(u"QSlider::handle:vertical{\n"
 "	height: 4px;\n"
@@ -732,7 +732,7 @@ class Ui_MainWindow(object):
         self.green_dmx_slider.setOrientation(Qt.Vertical)
         self.red_dmx_slider = QSlider(self.DMX_tab)
         self.red_dmx_slider.setObjectName(u"red_dmx_slider")
-        self.red_dmx_slider.setGeometry(QRect(225, 200, 18, 51))
+        self.red_dmx_slider.setGeometry(QRect(305, 210, 18, 51))
         self.red_dmx_slider.setCursor(QCursor(Qt.OpenHandCursor))
         self.red_dmx_slider.setStyleSheet(u"QSlider::handle:vertical{\n"
 "	height: 4px;\n"
@@ -750,7 +750,7 @@ class Ui_MainWindow(object):
         self.red_dmx_slider.setOrientation(Qt.Vertical)
         self.blue_dmx_slider = QSlider(self.DMX_tab)
         self.blue_dmx_slider.setObjectName(u"blue_dmx_slider")
-        self.blue_dmx_slider.setGeometry(QRect(450, 135, 18, 51))
+        self.blue_dmx_slider.setGeometry(QRect(500, 135, 18, 51))
         self.blue_dmx_slider.setCursor(QCursor(Qt.OpenHandCursor))
         self.blue_dmx_slider.setStyleSheet(u"QSlider::handle:vertical{\n"
 "	height: 4px;\n"
@@ -765,7 +765,7 @@ class Ui_MainWindow(object):
         self.blue_dmx_slider.setOrientation(Qt.Vertical)
         self.RGB_dmx_slider = QSlider(self.DMX_tab)
         self.RGB_dmx_slider.setObjectName(u"RGB_dmx_slider")
-        self.RGB_dmx_slider.setGeometry(QRect(45, 280, 476, 26))
+        self.RGB_dmx_slider.setGeometry(QRect(45, 290, 476, 26))
         self.RGB_dmx_slider.setCursor(QCursor(Qt.OpenHandCursor))
         self.RGB_dmx_slider.setMouseTracking(False)
         self.RGB_dmx_slider.setLayoutDirection(Qt.LeftToRight)
@@ -784,17 +784,19 @@ class Ui_MainWindow(object):
 "	border-radius: 2px;\n"
 "    background: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(255, 0, 0, 255), stop:0.166 rgba(255, 255, 0, 255), stop:0.333 rgba(0, 255, 0, 255), stop:0.5 rgba(0, 255, 255, 255), stop:0.666 rgba(0, 0, 255, 255), stop:0.833 rgba(255, 0, 255, 255), stop:1 rgba(255, 0, 0, 255));\n"
 "\n"
-"}")
+"}\n"
+"\n"
+"")
         self.RGB_dmx_slider.setMaximum(768)
         self.RGB_dmx_slider.setOrientation(Qt.Horizontal)
         self.RGB_dmx_slider.setTickPosition(QSlider.NoTicks)
         self.RGB_dmx_slider.setTickInterval(10)
         self.autoSend_dmx_command = QCheckBox(self.DMX_tab)
         self.autoSend_dmx_command.setObjectName(u"autoSend_dmx_command")
-        self.autoSend_dmx_command.setGeometry(QRect(215, 530, 151, 26))
+        self.autoSend_dmx_command.setGeometry(QRect(215, 595, 151, 26))
         self.line_3 = QFrame(self.DMX_tab)
         self.line_3.setObjectName(u"line_3")
-        self.line_3.setGeometry(QRect(-5, 315, 591, 16))
+        self.line_3.setGeometry(QRect(-5, 380, 591, 16))
         self.line_3.setFrameShadow(QFrame.Sunken)
         self.line_3.setFrameShape(QFrame.HLine)
         self.line_4 = QFrame(self.DMX_tab)
@@ -807,7 +809,7 @@ class Ui_MainWindow(object):
         self.label_12.setGeometry(QRect(435, 85, 20, 20))
         self.label_15 = QLabel(self.DMX_tab)
         self.label_15.setObjectName(u"label_15")
-        self.label_15.setGeometry(QRect(180, 340, 206, 16))
+        self.label_15.setGeometry(QRect(180, 405, 206, 16))
         font5 = QFont()
         font5.setBold(True)
         self.label_15.setFont(font5)
@@ -818,7 +820,7 @@ class Ui_MainWindow(object):
         self.DMX_command_label = QListWidget(self.DMX_tab)
         QListWidgetItem(self.DMX_command_label)
         self.DMX_command_label.setObjectName(u"DMX_command_label")
-        self.DMX_command_label.setGeometry(QRect(10, 365, 556, 126))
+        self.DMX_command_label.setGeometry(QRect(10, 430, 556, 126))
         font6 = QFont()
         font6.setFamilies([u"DIALux Report Font"])
         font6.setPointSize(8)
@@ -830,6 +832,56 @@ class Ui_MainWindow(object):
         self.Slots_per_link.setGeometry(QRect(190, 85, 56, 22))
         self.Slots_per_link.setMinimum(5)
         self.Slots_per_link.setMaximum(513)
+        self.formatValues = QComboBox(self.DMX_tab)
+        self.formatValues.addItem("")
+        self.formatValues.addItem("")
+        self.formatValues.addItem("")
+        self.formatValues.setObjectName(u"formatValues")
+        self.formatValues.setGeometry(QRect(35, 155, 81, 22))
+        self.resolutionValues = QComboBox(self.DMX_tab)
+        self.resolutionValues.addItem("")
+        self.resolutionValues.addItem("")
+        self.resolutionValues.setObjectName(u"resolutionValues")
+        self.resolutionValues.setGeometry(QRect(35, 230, 81, 22))
+        self.formatLabel = QLabel(self.DMX_tab)
+        self.formatLabel.setObjectName(u"formatLabel")
+        self.formatLabel.setGeometry(QRect(50, 135, 49, 16))
+        self.resolutionLabel = QLabel(self.DMX_tab)
+        self.resolutionLabel.setObjectName(u"resolutionLabel")
+        self.resolutionLabel.setGeometry(QRect(45, 210, 56, 16))
+        self.brightness_slider = QSlider(self.DMX_tab)
+        self.brightness_slider.setObjectName(u"brightness_slider")
+        self.brightness_slider.setGeometry(QRect(45, 330, 476, 26))
+        self.brightness_slider.setCursor(QCursor(Qt.OpenHandCursor))
+        self.brightness_slider.setStyleSheet(u"QSlider::handle:horizontal\n"
+"{\n"
+"    background: rgb(255, 255, 255);\n"
+"    width: 6px;\n"
+"    height: 12px;\n"
+"	margin: 2px 0px;\n"
+"    border-radius: 7px;\n"
+"    border: 1px solid rgb(0, 0, 0);\n"
+"}\n"
+"QSlider::groove:horizontal\n"
+"{\n"
+"	background: rgb(200, 200, 200)\n"
+"}\n"
+"\n"
+"\n"
+"\n"
+"\n"
+"")
+        self.brightness_slider.setOrientation(Qt.Horizontal)
+        self.lampIcon = QLabel(self.DMX_tab)
+        self.lampIcon.setObjectName(u"lampIcon")
+        self.lampIcon.setGeometry(QRect(10, 330, 26, 26))
+        self.lampIcon.setStyleSheet(u"image: url(:/newPrefix/images/lamp.png);")
+        self.label_8 = QLabel(self.DMX_tab)
+        self.label_8.setObjectName(u"label_8")
+        self.label_8.setGeometry(QRect(45, 360, 26, 16))
+        self.label_60 = QLabel(self.DMX_tab)
+        self.label_60.setObjectName(u"label_60")
+        self.label_60.setGeometry(QRect(490, 360, 31, 16))
         self.tabWidget.addTab(self.DMX_tab, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -913,7 +965,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         self.refreshPorts.setDefault(False)
 
 
@@ -1072,6 +1124,18 @@ class Ui_MainWindow(object):
         ___qlistwidgetitem.setText(QCoreApplication.translate("MainWindow", u"000 - 00 00 00 00 00 00 00 00 00 00 00 00 AD 2A 00 AA 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00", None));
         self.DMX_command_label.setSortingEnabled(__sortingEnabled)
 
+        self.formatValues.setItemText(0, QCoreApplication.translate("MainWindow", u"Decimal", None))
+        self.formatValues.setItemText(1, QCoreApplication.translate("MainWindow", u"Hexadecimal", None))
+        self.formatValues.setItemText(2, QCoreApplication.translate("MainWindow", u"Percentual", None))
+
+        self.resolutionValues.setItemText(0, QCoreApplication.translate("MainWindow", u"8 bits", None))
+        self.resolutionValues.setItemText(1, QCoreApplication.translate("MainWindow", u"16 bits", None))
+
+        self.formatLabel.setText(QCoreApplication.translate("MainWindow", u"Formato", None))
+        self.resolutionLabel.setText(QCoreApplication.translate("MainWindow", u"Resolu\u00e7\u00e3o", None))
+        self.lampIcon.setText("")
+        self.label_8.setText(QCoreApplication.translate("MainWindow", u"0%", None))
+        self.label_60.setText(QCoreApplication.translate("MainWindow", u"100%", None))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.DMX_tab), QCoreApplication.translate("MainWindow", u"Modo DMX", None))
         self.menuAjuda.setTitle(QCoreApplication.translate("MainWindow", u"Ajuda", None))
         self.menuSair.setTitle(QCoreApplication.translate("MainWindow", u"Sair", None))
