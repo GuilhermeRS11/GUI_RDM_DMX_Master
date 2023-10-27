@@ -2869,7 +2869,7 @@ QSlider::groove:horizontal
        <number>513</number>
       </property>
      </widget>
-     <widget class="QComboBox" name="formatValues">
+     <widget class="QComboBox" name="format_values">
       <property name="geometry">
        <rect>
         <x>35</x>
@@ -2894,7 +2894,7 @@ QSlider::groove:horizontal
        </property>
       </item>
      </widget>
-     <widget class="QComboBox" name="resolutionValues">
+     <widget class="QComboBox" name="resolution_values">
       <property name="geometry">
        <rect>
         <x>35</x>
@@ -2914,7 +2914,7 @@ QSlider::groove:horizontal
        </property>
       </item>
      </widget>
-     <widget class="QLabel" name="formatLabel">
+     <widget class="QLabel" name="format_label">
       <property name="geometry">
        <rect>
         <x>50</x>
@@ -2971,6 +2971,9 @@ QSlider::groove:horizontal
 
 
 </string>
+      </property>
+      <property name="maximum">
+       <number>100</number>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>

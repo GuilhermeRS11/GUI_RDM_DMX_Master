@@ -32,11 +32,13 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
     
             self.Slots_per_link.setValue(256)  # Inicializa o numero de slots por link com o valor 513
             self.serialFindPorts()             # Faz a primeira busca pelas portas serial do sistema
+            self.formatValues()                # Inicializa o formado dos dados DMX
+            self.resolutionValues()            # Inicializa a resolucao dos dados DMX
+            self.brightnessSlider()            # Inicializa o brilho 
             self.caixaCommand()                # Atualiza os campos de exibicao com os valores zerados
             self.rgbSlider()                   # Atualiza os valores das cores atraves da posicao inicial do slider rgb
             self.assembleDMX()                 # Atualiza o comando a ser enviado no DMX   
             self.red_dmx_box.setValue(255)     # Inicializa a caixa de texto com o valor coerente
-                   
 
 
         """ 
@@ -81,6 +83,10 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         #############################################################################################
         """
 
+        self.resolution_values.activated.connect(self.resolutionValues)
+        self.format_values.activated.connect(self.formatValues)
+        self.brightness_slider.valueChanged.connect(self.brightnessSlider)
+
         self.white_dmx_box.valueChanged.connect(self.whiteBox)
         self.white_dmx_slider.valueChanged.connect(self.whiteSlider)
         self.blue_dmx_box.valueChanged.connect(self.blueBox)
@@ -99,7 +105,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.green_dmx_box.textChanged.connect(self.assembleDMX)
         self.send_command_dmx.clicked.connect(self.sendDMXcommand)
         self.autoSend_dmx_command.stateChanged.connect(self.autoDMXcommand) 
-
+        
         self.DMX_address.setPlaceholderText("1 - FF")  
         self.DMX_address.setMaxLength(2) # Define o limite de caracteres a serem digitados
 
@@ -663,53 +669,141 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                                             DMX_frontend
     #############################################################################################
     """
+    
+    def formatValues(self):
+        self.resolutionValues()
+        if(self.format_values.currentText() == "Decimal"):
+            # Seta caixas para decimal
+            self.white_dmx_box.displayIntegerBase = 10
+            self.blue_dmx_box.displayIntegerBase = 10
+            self.red_dmx_box.displayIntegerBase = 10
+            self.green_dmx_box.displayIntegerBase = 10
             
+
+        elif(self.format_values.currentText() == "Hexadecimal"):
+            # Seta caixas para hexadecimal
+            self.white_dmx_box.displayIntegerBase = 16
+            self.blue_dmx_box.displayIntegerBase = 16
+            self.red_dmx_box.displayIntegerBase = 16
+            self.green_dmx_box.displayIntegerBase = 16
+
+        else:
+            # Seta caixas para percentual
+            self.white_dmx_box.displayIntegerBase = 10
+            self.blue_dmx_box.displayIntegerBase = 10
+            self.red_dmx_box.displayIntegerBase = 10
+            self.green_dmx_box.displayIntegerBase = 10
+
+
+    def resolutionValues(self):
+        global maxValue_onResolution
+        if(self.resolution_values.currentText() == "8 bits"):
+            # Seta todos os campos para terem 8 bits
+            maxValue_onResolution = 255
+            self.white_dmx_slider.setMaximum(255)
+            self.blue_dmx_slider.setMaximum(255)
+            self.green_dmx_slider.setMaximum(255)
+            self.RGB_dmx_slider.setMaximum(256*3)
+            self.red_dmx_slider.setMaximum(255)
+            self.brightness_slider.setMaximum(255)
+
+            if(self.format_values.currentText() == "Decimal" or self.format_values.currentText() == "Hexadecimal"):
+                self.white_dmx_box.setMaximum(255)
+                self.blue_dmx_box.setMaximum(255)
+                self.red_dmx_box.setMaximum(255)
+                self.green_dmx_box.setMaximum(255)
+            
+            else: # Percentual
+                self.white_dmx_box.setMaximum(100)
+                self.blue_dmx_box.setMaximum(100)
+                self.red_dmx_box.setMaximum(100)
+                self.green_dmx_box.setMaximum(100)
+                        
+        else:
+            # Seta todos os campos para terem 16 bits
+            maxValue_onResolution = 65535
+            self.white_dmx_box.setMaximum(65535)
+            self.white_dmx_slider.setMaximum(65535)
+            self.blue_dmx_box.setMaximum(65535)
+            self.blue_dmx_slider.setMaximum(65535)
+            self.red_dmx_box.setMaximum(65535)
+            self.red_dmx_slider.setMaximum(65535)
+            self.green_dmx_box.setMaximum(65535)
+            self.green_dmx_slider.setMaximum(65535)
+            self.brightness_slider.setMaximum(65535)
+            self.RGB_dmx_slider.setMaximum(65536*3) 
+
     def whiteSlider(self):
-        self.white_dmx_box.setValue(self.white_dmx_slider.value())
+        if(self.format_values.currentText() == "Percentual"):
+            self.white_dmx_box.setValue(round(100 * self.white_dmx_slider.value() / maxValue_onResolution))
+            print(round(100 * self.white_dmx_slider.value() / maxValue_onResolution))
+        else:
+            self.white_dmx_box.setValue(self.white_dmx_slider.value())
 
     def whiteBox(self):
-        self.white_dmx_slider.setValue(self.white_dmx_box.value())
+        if(self.format_values.currentText() == "Percentual"):
+            self.white_dmx_slider.setValue(round(maxValue_onResolution * self.white_dmx_box.value() / 100))
+        else:
+            self.white_dmx_slider.setValue(self.white_dmx_box.value())
+
+            # Usar o formato de cima para os demais
 
     def blueSlider(self):
         self.blue_dmx_box.setValue(self.blue_dmx_slider.value())
 
     def blueBox(self):
-        self.blue_dmx_slider.setValue(self.blue_dmx_box.value())
+        if(self.format_values.currentText() == "Percentual"):
+            self.blue_dmx_slider.setValue(round(maxValue_onResolution * self.blue_dmx_box.value() / 100))
+        else:
+            self.blue_dmx_slider.setValue(self.blue_dmx_box.value())
 
     def redSlider(self):
         self.red_dmx_box.setValue(self.red_dmx_slider.value())
 
     def redBox(self):
-        self.red_dmx_slider.setValue(self.red_dmx_box.value())
+        if(self.format_values.currentText() == "Percentual"):
+            self.red_dmx_slider.setValue(round(maxValue_onResolution * self.red_dmx_box.value() / 100))
+        else:
+            self.red_dmx_slider.setValue(self.red_dmx_box.value())
 
     def greenSlider(self):
         self.green_dmx_box.setValue(self.green_dmx_slider.value())
 
     def greenBox(self):
-        self.green_dmx_slider.setValue(self.green_dmx_box.value())
+        if(self.format_values.currentText() == "Percentual"):
+            self.green_dmx_slider.setValue(round(maxValue_onResolution * self.green_dmx_box.value() / 100))
+        else:
+            self.green_dmx_slider.setValue(self.green_dmx_box.value())
 
     def rgbSlider(self):
         rgb = self.RGB_dmx_slider.value()
 
-        if rgb < 255:
-            red = 255 - rgb 
+        if rgb < maxValue_onResolution:
+            red = round((maxValue_onResolution - rgb) * brightness)
             blue = 0
-            green = rgb
+            green = round((rgb) * brightness)
 
-        elif rgb < 511:
+        elif rgb < maxValue_onResolution * 2 + 1:
             red = 0
-            blue = rgb - 255
-            green = 511 - rgb
+            blue = round((rgb - maxValue_onResolution) * brightness)
+            green = round((maxValue_onResolution * 2 + 1 - rgb) * brightness)
 
         else:
-            red = rgb - 511
-            blue = 767 - rgb
+            red = round((rgb - maxValue_onResolution * 2 + 1) * brightness)
+            blue = round((maxValue_onResolution * 3 + 2 - rgb) * brightness)
             green = 0
 
         self.red_dmx_slider.setValue(red)
         self.blue_dmx_slider.setValue(blue)
         self.green_dmx_slider.setValue(green)
         self.white_dmx_slider.setValue(0)
+
+    def brightnessSlider(self):
+        global brightness
+        brightness = self.brightness_slider.value() / maxValue_onResolution # Valor máximo que podem assumir
+        
+        # Atualiza os valores dos sliders e boxes apos alteração do brilho
+        self.rgbSlider()
 
     def assembleDMX(self):
         # Monta o quadro DMX 
