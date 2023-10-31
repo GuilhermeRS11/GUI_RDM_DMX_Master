@@ -21,7 +21,8 @@ app.exec()
 
 # Ver se precisa decodificar os outros campos dos pacotes RDM. Ex: dados vindos do device_info
 
-# Modificar o campo UID. Dizer se é source ou destino. 
-# Modificar o parameterData para dizer o que é. Especialmente no GET DMX Address
+# Modificar o parameterData para dizer o que é. Tal como em GET DMX Address
 
-# Verificar a causa no atraso do envio de dados seriais 
+# Verificar a causa no atraso do envio de dados seriais
+
+# Implementar assemble dos dados de 16bits. Separar em dois bytes 

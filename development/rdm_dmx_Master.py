@@ -30,15 +30,15 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             Flag_just_once = False
             Auto_DMX_send = False
     
-            self.Slots_per_link.setValue(256)  # Inicializa o numero de slots por link com o valor 513
-            self.serialFindPorts()             # Faz a primeira busca pelas portas serial do sistema
-            self.formatValues()                # Inicializa o formado dos dados DMX
-            self.resolutionValues()            # Inicializa a resolucao dos dados DMX
-            self.brightnessSlider()            # Inicializa o brilho 
-            self.caixaCommand()                # Atualiza os campos de exibicao com os valores zerados
-            self.rgbSlider()                   # Atualiza os valores das cores atraves da posicao inicial do slider rgb
-            self.assembleDMX()                 # Atualiza o comando a ser enviado no DMX   
-            self.red_dmx_box.setValue(255)     # Inicializa a caixa de texto com o valor coerente
+            self.Slots_per_link.setValue(256)        # Inicializa o numero de slots por link com o valor 513
+            self.serialFindPorts()                   # Faz a primeira busca pelas portas serial do sistema
+            self.brightness_slider.setValue(255)     # Inicializa o brilho com o valor 100
+            self.resolutionValues()                  # Inicializa a resolucao dos dados DMX
+            self.brightnessSlider()                  # Inicializa o brilho 
+            self.caixaCommand()                      # Atualiza os campos de exibicao com os valores zerados
+            self.rgbSlider()                         # Atualiza os valores das cores atraves da posicao inicial do slider rgb
+            self.assembleDMX()                       # Atualiza o comando a ser enviado no DMX   
+            self.red_dmx_box.setValue(255)           # Inicializa a caixa de texto com o valor coerente
 
 
         """ 
@@ -83,7 +83,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         #############################################################################################
         """
 
-        self.resolution_values.activated.connect(self.resolutionValues)
+        self.resolution_values.activated.connect(self.reloadValuesAfterResolution)
         self.format_values.activated.connect(self.formatValues)
         self.brightness_slider.valueChanged.connect(self.brightnessSlider)
 
@@ -99,10 +99,10 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
         self.DMX_address.textChanged.connect(self.assembleDMX)
         self.Slots_per_link.valueChanged.connect(self.assembleDMX)
-        self.white_dmx_box.textChanged.connect(self.assembleDMX)
-        self.red_dmx_box.textChanged.connect(self.assembleDMX)
-        self.blue_dmx_box.textChanged.connect(self.assembleDMX)
-        self.green_dmx_box.textChanged.connect(self.assembleDMX)
+        self.white_dmx_slider.valueChanged.connect(self.assembleDMX)
+        self.red_dmx_slider.valueChanged.connect(self.assembleDMX)
+        self.blue_dmx_slider.valueChanged.connect(self.assembleDMX)
+        self.green_dmx_slider.valueChanged.connect(self.assembleDMX)
         self.send_command_dmx.clicked.connect(self.sendDMXcommand)
         self.autoSend_dmx_command.stateChanged.connect(self.autoDMXcommand) 
         
@@ -671,30 +671,19 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
     """
     
     def formatValues(self):
-        self.resolutionValues()
         if(self.format_values.currentText() == "Decimal"):
-            # Seta caixas para decimal
-            self.white_dmx_box.displayIntegerBase = 10
-            self.blue_dmx_box.displayIntegerBase = 10
-            self.red_dmx_box.displayIntegerBase = 10
-            self.green_dmx_box.displayIntegerBase = 10
-            
-
-        elif(self.format_values.currentText() == "Hexadecimal"):
-            # Seta caixas para hexadecimal
-            self.white_dmx_box.displayIntegerBase = 16
-            self.blue_dmx_box.displayIntegerBase = 16
-            self.red_dmx_box.displayIntegerBase = 16
-            self.green_dmx_box.displayIntegerBase = 16
-
-        else:
-            # Seta caixas para percentual
-            self.white_dmx_box.displayIntegerBase = 10
-            self.blue_dmx_box.displayIntegerBase = 10
-            self.red_dmx_box.displayIntegerBase = 10
-            self.green_dmx_box.displayIntegerBase = 10
-
-
+            self.resolutionValues()
+            self.white_dmx_box.setValue(self.white_dmx_slider.value())
+            self.blue_dmx_box.setValue(self.blue_dmx_slider.value())
+            self.red_dmx_box.setValue(self.red_dmx_slider.value())
+            self.green_dmx_box.setValue(self.green_dmx_slider.value())
+        else: # Percentual
+            self.white_dmx_box.setValue(round(100 * self.white_dmx_slider.value() / maxValue_onResolution))
+            self.blue_dmx_box.setValue(round(100 * self.blue_dmx_slider.value() / maxValue_onResolution))
+            self.red_dmx_box.setValue(round(100 * self.red_dmx_slider.value() / maxValue_onResolution))
+            self.green_dmx_box.setValue(round(100 * self.green_dmx_slider.value() / maxValue_onResolution))
+            self.resolutionValues() 
+        
     def resolutionValues(self):
         global maxValue_onResolution
         if(self.resolution_values.currentText() == "8 bits"):
@@ -707,7 +696,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.red_dmx_slider.setMaximum(255)
             self.brightness_slider.setMaximum(255)
 
-            if(self.format_values.currentText() == "Decimal" or self.format_values.currentText() == "Hexadecimal"):
+            if(self.format_values.currentText() == "Decimal"):
                 self.white_dmx_box.setMaximum(255)
                 self.blue_dmx_box.setMaximum(255)
                 self.red_dmx_box.setMaximum(255)
@@ -732,11 +721,39 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.green_dmx_slider.setMaximum(65535)
             self.brightness_slider.setMaximum(65535)
             self.RGB_dmx_slider.setMaximum(65536*3) 
+            
+            if(self.format_values.currentText() == "Decimal"):
+                self.white_dmx_box.setMaximum(65535)
+                self.blue_dmx_box.setMaximum(65535)
+                self.red_dmx_box.setMaximum(65535)
+                self.green_dmx_box.setMaximum(65535)
+            
+            else: # Percentual
+                self.white_dmx_box.setMaximum(100)
+                self.blue_dmx_box.setMaximum(100)
+                self.red_dmx_box.setMaximum(100)
+                self.green_dmx_box.setMaximum(100)
 
+    def reloadValuesAfterResolution(self):
+        # Atualiza os valores dos sliders e boxes apos alteração da resolução
+        # Converte o valor de 8bits para 16bits e vice versa, mantendo a proporção, armazenando o valor atual antes de alterar a resolução
+        RGBAtual = self.RGB_dmx_slider.value()
+        brightnessAtual = self.brightness_slider.value()
+     
+        self.resolutionValues()
+        if(self.resolution_values.currentText() == "8 bits"):
+            maxValueOldResolution = 65535
+                    
+        else:
+            maxValueOldResolution = 255
+
+        self.brightness_slider.setValue(round(brightnessAtual * maxValue_onResolution / maxValueOldResolution))
+        self.RGB_dmx_slider.setValue(round(RGBAtual * maxValue_onResolution / (maxValueOldResolution)))
+           
     def whiteSlider(self):
         if(self.format_values.currentText() == "Percentual"):
             self.white_dmx_box.setValue(round(100 * self.white_dmx_slider.value() / maxValue_onResolution))
-            print(round(100 * self.white_dmx_slider.value() / maxValue_onResolution))
+
         else:
             self.white_dmx_box.setValue(self.white_dmx_slider.value())
 
@@ -746,10 +763,11 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         else:
             self.white_dmx_slider.setValue(self.white_dmx_box.value())
 
-            # Usar o formato de cima para os demais
-
     def blueSlider(self):
-        self.blue_dmx_box.setValue(self.blue_dmx_slider.value())
+        if(self.format_values.currentText() == "Percentual"):
+            self.blue_dmx_box.setValue(round(100 * self.blue_dmx_slider.value() / maxValue_onResolution))  
+        else:
+            self.blue_dmx_box.setValue(self.blue_dmx_slider.value())
 
     def blueBox(self):
         if(self.format_values.currentText() == "Percentual"):
@@ -758,7 +776,10 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.blue_dmx_slider.setValue(self.blue_dmx_box.value())
 
     def redSlider(self):
-        self.red_dmx_box.setValue(self.red_dmx_slider.value())
+        if(self.format_values.currentText() == "Percentual"):
+            self.red_dmx_box.setValue(round(100 * self.red_dmx_slider.value() / maxValue_onResolution))
+        else:
+            self.red_dmx_box.setValue(self.red_dmx_slider.value())
 
     def redBox(self):
         if(self.format_values.currentText() == "Percentual"):
@@ -767,7 +788,10 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.red_dmx_slider.setValue(self.red_dmx_box.value())
 
     def greenSlider(self):
-        self.green_dmx_box.setValue(self.green_dmx_slider.value())
+        if(self.format_values.currentText() == "Percentual"):
+            self.green_dmx_box.setValue(round(100 * self.green_dmx_slider.value() / maxValue_onResolution))  
+        else:
+            self.green_dmx_box.setValue(self.green_dmx_slider.value())
 
     def greenBox(self):
         if(self.format_values.currentText() == "Percentual"):
@@ -816,10 +840,10 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             DMX_address = "0x0"
 
         Slots_per_link = self.Slots_per_link.value()
-        white_value = self.white_dmx_box.value()
-        blue_value = self.blue_dmx_box.value()
-        green_value = self.green_dmx_box.value()
-        red_value = self.red_dmx_box.value()
+        white_value = self.white_dmx_slider.value()
+        blue_value = self.blue_dmx_slider.value()
+        green_value = self.green_dmx_slider.value()
+        red_value = self.red_dmx_slider.value()
        
         DMX_frame.clear()     # Limpa o conteudo do frame antes de atribuir qualquer valor
         for i in range(Slots_per_link):
@@ -850,23 +874,26 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             current_time = time.time() * 1000  # Get the current time in milliseconds
             elapsed_time = current_time - self.last_dmx_command_time
 
-            if elapsed_time > 500:
+            if elapsed_time > 2:
+                self.tic()
                 self.sendDMXcommand()
                 self.last_dmx_command_time = current_time
+                self.toc()
 
     def sendDMXcommand(self): 
         # Envia frame DMX por serial. Pode ser que seja necessário desconsiderar os tempos
+        
         global serialComunication
-
         serialComunication.close()
         serialComunication = serial.Serial(port=self.serialPort.currentText(), baudrate=250000,
                                         bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
         
         # Converte a lista DMX_frame em bytes e envia tudo de uma vez
         serialComunication.write(bytes(DMX_frame))
-        
+                
         serialComunication.close()
         print("Comando DMX enviado")
+        
 
     def autoDMXcommand(self):
         global Auto_DMX_send
@@ -879,3 +906,13 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             # Se nao estiver marcado
             self.send_command_dmx.setEnabled(True)
             Auto_DMX_send = False
+
+    def tic(self):
+    # Homemade version of matlab tic and toc functions
+    
+        global startTime_for_tictoc
+        startTime_for_tictoc = time.time()
+
+    def toc(self):
+        print("Elapsed time is ",(time.time() - startTime_for_tictoc)," seconds.")
+        
