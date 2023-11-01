@@ -54,6 +54,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.parametro.activated.connect(self.caixaCommand)
         self.send_command.clicked.connect(self.SendCommand)
         self.menuSair.triggered.connect(self.quit)
+        self.serialPort.activated.connect(self.changeSerialPort)
 
         # Atualização dos bytes das caixas de exibição
         self.destination_UID.textEdited.connect(self.caixaCommand)
@@ -436,13 +437,8 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         global command2send
         global serialComunication
         
-        serialComunication.close()
-        serialComunication = serial.Serial(port = self.serialPort.currentText(), baudrate=250000,
-                           bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
-        
         # Faz o envio dos dados RDM
         serialComunication.write(bytes(command2send))
-
         print("Comando RDM enviado")
 
         # Faz o recebimento dos dados RDM
@@ -454,8 +450,6 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         # Testa o recebimento de um frame de resposta a um RDM padrao
         #receive = [0xcc, 0x01, 0x19, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xcb, 0xa9, 0x87, 0x65, 0x43, 0x21, 0x00, 0x01, 0x00, 0x00, 0x00, 0x20, 0x00, 0x30, 0x01, 0x04, 0x06, 0x6a]
         self.responseProcess(receive)
-        
-        serialComunication.close()
         
     def responseProcess(self, receive):
         # Ajusta os dados recebidos para exibir na tela 
@@ -874,26 +868,14 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             current_time = time.time() * 1000  # Get the current time in milliseconds
             elapsed_time = current_time - self.last_dmx_command_time
 
-            if elapsed_time > 2:
-                self.tic()
+            if elapsed_time > 50:
                 self.sendDMXcommand()
                 self.last_dmx_command_time = current_time
-                self.toc()
-
-    def sendDMXcommand(self): 
-        # Envia frame DMX por serial. Pode ser que seja necessário desconsiderar os tempos
-        
-        global serialComunication
-        serialComunication.close()
-        serialComunication = serial.Serial(port=self.serialPort.currentText(), baudrate=250000,
-                                        bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
-        
-        # Converte a lista DMX_frame em bytes e envia tudo de uma vez
-        serialComunication.write(bytes(DMX_frame))
                 
-        serialComunication.close()
+    def sendDMXcommand(self): 
+        # Envia frame DMX por serial
+        serialComunication.write(bytes(DMX_frame))
         print("Comando DMX enviado")
-        
 
     def autoDMXcommand(self):
         global Auto_DMX_send
@@ -914,5 +896,12 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         startTime_for_tictoc = time.time()
 
     def toc(self):
-        print("Elapsed time is ",(time.time() - startTime_for_tictoc)," seconds.")
+        print("Elapsed time is ",(time.time() - startTime_for_tictoc)*1000," miliseconds.")
+
+    def changeSerialPort(self):
+    # Altera a porta serial de acordo com a selecionada
+        global serialComunication
+        serialComunication.close()
+        serialComunication = serial.Serial(port=self.serialPort.currentText(), baudrate=250000,
+                                        bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
         
