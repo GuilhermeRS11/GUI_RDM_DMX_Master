@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QMainWindow
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QTimer
 from RDM_DMX_Master_ui import Ui_MainWindow
 from ast import literal_eval
 
@@ -21,14 +21,20 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.app = app
         self.setWindowTitle("RDM DMX Master")
 
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.sendLastCommand)
+
         # Executa os camandos abaixo apenas na inicialização do app
         global Flag_just_once
         global Slots_per_link
         global Auto_DMX_send
+        global elapsed_time, last_command_sent
 
         if Flag_just_once:
             Flag_just_once = False
             Auto_DMX_send = False
+            elapsed_time = 0
+            last_command_sent = True
     
             self.Slots_per_link.setValue(256)        # Inicializa o numero de slots por link com o valor 513
             self.serialFindPorts()                   # Faz a primeira busca pelas portas serial do sistema
@@ -865,13 +871,30 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                   
         if Auto_DMX_send:
             # Envia automaticamente os comandos se a caixa estiver marcada e verifica se já é tempo de enviar para a serial 
+            global elapsed_time, last_command_sent
             current_time = time.time() * 1000  # Get the current time in milliseconds
             elapsed_time = current_time - self.last_dmx_command_time
 
-            if elapsed_time > 50:
+            if elapsed_time > 200:
                 self.sendDMXcommand()
                 self.last_dmx_command_time = current_time
-                
+                last_command_sent = False
+                self.timer.start(205) # Inicia o timer que verifica se o ultimo comando foi enviado
+                                      # Se ainda há comando a serem enviados ele reinicia o timer
+            
+
+    def sendLastCommand(self):
+        # Envia o ultimo comando DMX enviado após passar o tempo de espera, para garantir que o ultimo comando seja o ultimo montado
+        if(Auto_DMX_send):
+            global elapsed_time, last_command_sent
+            current_time = time.time() * 1000
+            if (current_time - elapsed_time > 400 and not(last_command_sent)):
+                self.sendDMXcommand()
+                last_command_sent = True
+                print("Ultimo comando enviado")
+                self.timer.stop()
+
+
     def sendDMXcommand(self): 
         # Envia frame DMX por serial
         serialComunication.write(bytes(DMX_frame))
