@@ -106,10 +106,10 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
         self.DMX_address.textChanged.connect(self.assembleDMX)
         self.Slots_per_link.valueChanged.connect(self.assembleDMX)
-        self.white_dmx_slider.valueChanged.connect(self.assembleDMX)
-        self.red_dmx_slider.valueChanged.connect(self.assembleDMX)
-        self.blue_dmx_slider.valueChanged.connect(self.assembleDMX)
-        self.green_dmx_slider.valueChanged.connect(self.assembleDMX)
+        #self.white_dmx_slider.valueChanged.connect(self.assembleDMX)
+        #self.red_dmx_slider.valueChanged.connect(self.assembleDMX)
+        #self.blue_dmx_slider.valueChanged.connect(self.assembleDMX)
+        #self.green_dmx_slider.valueChanged.connect(self.assembleDMX)
         self.send_command_dmx.clicked.connect(self.sendDMXcommand)
         self.autoSend_dmx_command.stateChanged.connect(self.autoDMXcommand) 
         
@@ -118,6 +118,8 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
         # Instanciação do timer para enviar comandando DMX automaticamente, espaçados de algum tempo
         self.last_dmx_command_time = 0
+        # Instanciação da flag que indica se o commando é via RGB slidder. Serve para impedir que multiplas chamadas do assembleDMX()
+        self.isRGB_slidder_command = False
         
     """ 
     #############################################################################################
@@ -757,17 +759,23 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         else:
             self.white_dmx_box.setValue(self.white_dmx_slider.value())
 
+        if(self.isRGB_slidder_command == False):
+            self.assembleDMX()
+
     def whiteBox(self):
         if(self.format_values.currentText() == "Percentual"):
             self.white_dmx_slider.setValue(round(maxValue_onResolution * self.white_dmx_box.value() / 100))
         else:
             self.white_dmx_slider.setValue(self.white_dmx_box.value())
+        
 
     def blueSlider(self):
         if(self.format_values.currentText() == "Percentual"):
             self.blue_dmx_box.setValue(round(100 * self.blue_dmx_slider.value() / maxValue_onResolution))  
         else:
             self.blue_dmx_box.setValue(self.blue_dmx_slider.value())
+        if(self.isRGB_slidder_command == False):
+            self.assembleDMX()
 
     def blueBox(self):
         if(self.format_values.currentText() == "Percentual"):
@@ -780,6 +788,8 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.red_dmx_box.setValue(round(100 * self.red_dmx_slider.value() / maxValue_onResolution))
         else:
             self.red_dmx_box.setValue(self.red_dmx_slider.value())
+        if(self.isRGB_slidder_command == False):
+            self.assembleDMX()
 
     def redBox(self):
         if(self.format_values.currentText() == "Percentual"):
@@ -792,6 +802,8 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.green_dmx_box.setValue(round(100 * self.green_dmx_slider.value() / maxValue_onResolution))  
         else:
             self.green_dmx_box.setValue(self.green_dmx_slider.value())
+        if(self.isRGB_slidder_command == False):
+            self.assembleDMX()
 
     def greenBox(self):
         if(self.format_values.currentText() == "Percentual"):
@@ -817,10 +829,13 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             blue = round((maxValue_onResolution * 3 + 2 - rgb) * brightness)
             green = 0
 
+        self.isRGB_slidder_command = True # Ativa a flag para não chamar a função assembleDMX() durante a alteração dos sliders
         self.red_dmx_slider.setValue(red)
         self.blue_dmx_slider.setValue(blue)
         self.green_dmx_slider.setValue(green)
         self.white_dmx_slider.setValue(0)
+        self.assembleDMX()
+        print("Montei RGB!") 
 
     def brightnessSlider(self):
         global brightness
@@ -868,35 +883,35 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                 # Separa a impressao em grupos de 30 bytes
                 self.DMX_command_label.addItem(DMX_frame_show)
                 DMX_frame_show = f"{i:0{3}}" + " -"
-                  
+
+        print("Montei o Frame!")
         if Auto_DMX_send:
             # Envia automaticamente os comandos se a caixa estiver marcada e verifica se já é tempo de enviar para a serial 
             global elapsed_time, last_command_sent
             current_time = time.time() * 1000  # Get the current time in milliseconds
             elapsed_time = current_time - self.last_dmx_command_time
 
-            if elapsed_time > 200:
+            if elapsed_time > 20:
                 self.sendDMXcommand()
                 self.last_dmx_command_time = current_time
                 last_command_sent = False
-                self.timer.start(205) # Inicia o timer que verifica se o ultimo comando foi enviado
+                self.timer.start(200) # Inicia o timer que verifica se o ultimo comando foi enviado
                                       # Se ainda há comando a serem enviados ele reinicia o timer
             
-
     def sendLastCommand(self):
         # Envia o ultimo comando DMX enviado após passar o tempo de espera, para garantir que o ultimo comando seja o ultimo montado
         if(Auto_DMX_send):
             global elapsed_time, last_command_sent
             current_time = time.time() * 1000
-            if (current_time - elapsed_time > 400 and not(last_command_sent)):
+            if (current_time - elapsed_time > 40 and not(last_command_sent)):
                 self.sendDMXcommand()
                 last_command_sent = True
                 print("Ultimo comando enviado")
                 self.timer.stop()
 
-
     def sendDMXcommand(self): 
         # Envia frame DMX por serial
+        self.isRGB_slidder_command = False # Desativa a flag para permitir a chamada da função assembleDMX() durante a alteração dos sliders
         serialComunication.write(bytes(DMX_frame))
         print("Comando DMX enviado")
 
