@@ -28,13 +28,14 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         global Flag_just_once
         global Slots_per_link
         global Auto_DMX_send
-        global elapsed_time, last_command_sent
+        global elapsed_time, last_command_sent, startTime_for_tictoc
 
         if Flag_just_once:
             Flag_just_once = False
             Auto_DMX_send = False
             elapsed_time = 0
             last_command_sent = True
+            startTime_for_tictoc = 0
     
             self.Slots_per_link.setValue(256)        # Inicializa o numero de slots por link com o valor 513
             self.serialFindPorts()                   # Faz a primeira busca pelas portas serial do sistema
@@ -835,12 +836,11 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.green_dmx_slider.setValue(green)
         self.white_dmx_slider.setValue(0)
         self.assembleDMX()
-        print("Montei RGB!") 
 
     def brightnessSlider(self):
         global brightness
         brightness = self.brightness_slider.value() / maxValue_onResolution # Valor máximo que podem assumir
-        
+        self.brightness_percentage_box.setText(str(round(brightness * 100)) + "%")
         # Atualiza os valores dos sliders e boxes apos alteração do brilho
         self.rgbSlider()
 
@@ -884,19 +884,19 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                 self.DMX_command_label.addItem(DMX_frame_show)
                 DMX_frame_show = f"{i:0{3}}" + " -"
 
-        print("Montei o Frame!")
         if Auto_DMX_send:
             # Envia automaticamente os comandos se a caixa estiver marcada e verifica se já é tempo de enviar para a serial 
             global elapsed_time, last_command_sent
             current_time = time.time() * 1000  # Get the current time in milliseconds
             elapsed_time = current_time - self.last_dmx_command_time
 
-            if elapsed_time > 20:
+            if elapsed_time > 1:
                 self.sendDMXcommand()
                 self.last_dmx_command_time = current_time
                 last_command_sent = False
                 self.timer.start(200) # Inicia o timer que verifica se o ultimo comando foi enviado
                                       # Se ainda há comando a serem enviados ele reinicia o timer
+                
             
     def sendLastCommand(self):
         # Envia o ultimo comando DMX enviado após passar o tempo de espera, para garantir que o ultimo comando seja o ultimo montado

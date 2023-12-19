@@ -882,6 +882,14 @@ class Ui_MainWindow(object):
         self.label_60 = QLabel(self.DMX_tab)
         self.label_60.setObjectName(u"label_60")
         self.label_60.setGeometry(QRect(490, 360, 31, 16))
+        self.brightness_percentage_box = QLineEdit(self.DMX_tab)
+        self.brightness_percentage_box.setObjectName(u"brightness_percentage_box")
+        self.brightness_percentage_box.setGeometry(QRect(530, 330, 36, 26))
+        sizePolicy.setHeightForWidth(self.brightness_percentage_box.sizePolicy().hasHeightForWidth())
+        self.brightness_percentage_box.setSizePolicy(sizePolicy)
+        self.brightness_percentage_box.setBaseSize(QSize(0, 0))
+        self.brightness_percentage_box.setFrame(True)
+        self.brightness_percentage_box.setReadOnly(True)
         self.tabWidget.addTab(self.DMX_tab, "")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
@@ -965,7 +973,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         self.refreshPorts.setDefault(False)
 
 
@@ -1135,6 +1143,7 @@ class Ui_MainWindow(object):
         self.lampIcon.setText("")
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"0%", None))
         self.label_60.setText(QCoreApplication.translate("MainWindow", u"100%", None))
+        self.brightness_percentage_box.setInputMask("")
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.DMX_tab), QCoreApplication.translate("MainWindow", u"Modo DMX", None))
         self.menuAjuda.setTitle(QCoreApplication.translate("MainWindow", u"Ajuda", None))
         self.menuSair.setTitle(QCoreApplication.translate("MainWindow", u"Sair", None))
