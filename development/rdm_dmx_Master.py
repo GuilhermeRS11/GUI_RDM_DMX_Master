@@ -26,7 +26,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
         # Executa os camandos abaixo apenas na inicialização do app
         global Flag_just_once
-        global Slots_per_link
+        global Slots_per_link, command_len
         global Auto_DMX_send
         global elapsed_time, last_command_sent, startTime_for_tictoc
 
@@ -152,6 +152,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
     def caixaCommand(self):
         global command2send
+        global command_len
 
         classe = self.classe.currentText()
         parameter = self.parametro.currentText()
@@ -306,6 +307,16 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
         # Incluir caixa de texto extra para parametro adicional. O Disc unic branch precisa de dois
 
+        # Adapta os dados para enviar os parametros de comunicação entre a GUI Windows e o módulo Master RDM-DMX
+        Module_header = [0x7E, 0x06, 0x3A]
+        Module_tail = [0x7E, 0x06, 0x3B]
+
+        frame_size = command_len + 3
+        Module_frame_size = [frame_size >> 8, frame_size & 0xFF]  # Separa o Module_frame_size em dois bytes
+                
+        # Faz o envio dos dados RDM
+        command2send = Module_header + Module_frame_size + command2send + Module_tail
+
         # Separa cada byte do comando a ser enviado em cada caixa de texto correspondente
         self.command_1.setText(f"{command2send[0]:0{2}X}")
         self.command_2.setText(f"{command2send[1]:0{2}X}")
@@ -445,8 +456,13 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
     def SendCommand(self):
         global command2send
         global serialComunication
-        
-        # Faz o envio dos dados RDM
+        global command_len
+
+        #printa byte a byte o comando enviado:
+        for i in range(len(command2send)):
+            print(f"{command2send[i]:0{2}X}", end=" ")
+        print("\n")
+
         serialComunication.write(bytes(command2send))
         print("Comando RDM enviado")
 
@@ -654,6 +670,9 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.command_40.setAlignment(Qt.AlignCenter)
 
     def serialFindPorts(self):
+        global serialComunication
+        serialComunication.close()     # Fecha a porta serial atual, se não ela não aparece na lista
+
         ports = ['COM%s' % (i + 1) for i in range(256)]
         result = []
         for port in ports:
@@ -665,7 +684,9 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                 pass
             
         self.serialPort.clear()
-        self.serialPort.addItems(result)    # Cria os itens da box com a lista      
+        self.serialPort.addItems(result)    # Cria os itens da box com a lista  
+        
+        self.changeSerialPort()             # Já seleciona a primeira porta serial   
                 
     """ 
     #############################################################################################
