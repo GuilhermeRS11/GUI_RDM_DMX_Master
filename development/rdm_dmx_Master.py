@@ -12,7 +12,7 @@ Flag_just_once = True
 # Inicializa parametro que sera compartilhado entre as funcoes
 command2send = []
 DMX_frame = []
-serialComunication = serial.Serial(baudrate=250000, bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
+serialComunication = serial.Serial(baudrate=500000, bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
 class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
     def __init__(self, app):
@@ -849,6 +849,10 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         global DMX_frame
         global Slots_per_link
         global Auto_DMX_send 
+
+        # Adiciona cabeçalho e rodapé que são especificos para essa interface se comunicar com módulo DMX
+        Module_header = [0x7E, 0x06, 0x3A]
+        Module_tail = [0x7E, 0x06, 0x3B]
        
         DMX_address = "0x" + self.DMX_address.displayText()
         if DMX_address == "0x":
@@ -859,18 +863,35 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         blue_value = self.blue_dmx_slider.value()
         green_value = self.green_dmx_slider.value()
         red_value = self.red_dmx_slider.value()
+
+        # Define o tamanho do frame a ser enviado e adapta para caber um 2 bytes
+        frame_size = Slots_per_link + 3
+        Module_frame_size = [frame_size >> 8, frame_size & 0xFF]  # Separa o Module_frame_size em dois bytes
        
         DMX_frame.clear()     # Limpa o conteudo do frame antes de atribuir qualquer valor
+
+        # Adiciona o header e o tamanho do frame ao module frame
+        DMX_frame.append(Module_header[0])
+        DMX_frame.append(Module_header[1])
+        DMX_frame.append(Module_header[2])
+        DMX_frame.append(Module_frame_size[0])
+        DMX_frame.append(Module_frame_size[1])
+
         for i in range(Slots_per_link):
         # Inicializa o frame de envio do DMX
             DMX_frame.append(0x0)
 
         if (literal_eval(DMX_address)) and (literal_eval(DMX_address) < Slots_per_link - 2):
-            # Adiciona o valor das cores no endereco solicitado
-            DMX_frame[literal_eval(DMX_address)] = white_value
-            DMX_frame[literal_eval(DMX_address) + 1] = green_value
-            DMX_frame[literal_eval(DMX_address) + 2] = blue_value
-            DMX_frame[literal_eval(DMX_address) + 3] = red_value  
+            # Adiciona o valor das cores no endereco solicitado (+5 para compensar header e o tamanho de frame)
+            DMX_frame[literal_eval(DMX_address) + 5] = white_value
+            DMX_frame[literal_eval(DMX_address) + 5 + 1] = green_value
+            DMX_frame[literal_eval(DMX_address) + 5 + 2] = blue_value
+            DMX_frame[literal_eval(DMX_address) + 5 + 3] = red_value  
+
+        # Adiciona o tail ao module frame
+        DMX_frame.append(Module_tail[0])
+        DMX_frame.append(Module_tail[1])
+        DMX_frame.append(Module_tail[2])
 
         # Inicializa a label de comando a ser iniciado
         self.DMX_command_label.clear()
@@ -878,7 +899,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         
         for i in range(2, Slots_per_link + 1):
             # Mostra o frame DMX a ser enviado                
-            DMX_frame_show = DMX_frame_show + " " + f"{DMX_frame[i-1]:0{2}X}"
+            DMX_frame_show = DMX_frame_show + " " + f"{DMX_frame[i-1+5]:0{2}X}"
             if ((i % 32 == 0) and (i != 1) and (i != 0)) or (i == Slots_per_link):
                 # Separa a impressao em grupos de 30 bytes
                 self.DMX_command_label.addItem(DMX_frame_show)
@@ -894,6 +915,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                 self.sendDMXcommand()
                 self.last_dmx_command_time = current_time
                 last_command_sent = False
+                self.timer.stop()
                 self.timer.start(200) # Inicia o timer que verifica se o ultimo comando foi enviado
                                       # Se ainda há comando a serem enviados ele reinicia o timer
                 
@@ -927,9 +949,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.send_command_dmx.setEnabled(True)
             Auto_DMX_send = False
 
-    def tic(self):
-    # Homemade version of matlab tic and toc functions
-    
+    def tic(self):    
         global startTime_for_tictoc
         startTime_for_tictoc = time.time()
 
@@ -940,6 +960,6 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
     # Altera a porta serial de acordo com a selecionada
         global serialComunication
         serialComunication.close()
-        serialComunication = serial.Serial(port=self.serialPort.currentText(), baudrate=250000,
+        serialComunication = serial.Serial(port=self.serialPort.currentText(), baudrate=500000,
                                         bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
         
