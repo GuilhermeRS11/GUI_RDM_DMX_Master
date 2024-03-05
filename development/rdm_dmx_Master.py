@@ -911,13 +911,13 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             current_time = time.time() * 1000  # Get the current time in milliseconds
             elapsed_time = current_time - self.last_dmx_command_time
 
-            if elapsed_time > 1:
-                self.sendDMXcommand()
-                self.last_dmx_command_time = current_time
-                last_command_sent = False
-                self.timer.stop()
-                self.timer.start(200) # Inicia o timer que verifica se o ultimo comando foi enviado
-                                      # Se ainda há comando a serem enviados ele reinicia o timer
+            #if elapsed_time > 1: Caso precise habilitar um tempo de delay entre um comando e outro
+            self.sendDMXcommand()
+            self.last_dmx_command_time = current_time
+            last_command_sent = False
+            self.timer.stop()
+            self.timer.start(1) # Inicia o timer que verifica se o ultimo comando foi enviado
+                                    # Se ainda há comando a serem enviados ele reinicia o timer
                 
             
     def sendLastCommand(self):
