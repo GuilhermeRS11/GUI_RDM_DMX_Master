@@ -686,7 +686,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.serialPort.clear()
         self.serialPort.addItems(result)    # Cria os itens da box com a lista  
         
-        self.changeSerialPort()             # Já seleciona a primeira porta serial   
+        #self.changeSerialPort()             # Já seleciona a primeira porta serial   
                 
     """ 
     #############################################################################################
@@ -870,6 +870,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         global DMX_frame
         global Slots_per_link
         global Auto_DMX_send 
+        global frame_size
 
         # Adiciona cabeçalho e rodapé que são especificos para essa interface se comunicar com módulo DMX
         Module_header = [0x7E, 0x06, 0x3A]
@@ -929,24 +930,28 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         if Auto_DMX_send:
             # Envia automaticamente os comandos se a caixa estiver marcada e verifica se já é tempo de enviar para a serial 
             global elapsed_time, last_command_sent
-            current_time = time.time() * 1000  # Get the current time in milliseconds
+            current_time = time.time_ns()  # Get the current time in microseconds
             elapsed_time = current_time - self.last_dmx_command_time
-
-            #if elapsed_time > 1: Caso precise habilitar um tempo de delay entre um comando e outro
-            self.sendDMXcommand()
-            self.last_dmx_command_time = current_time
-            last_command_sent = False
-            self.timer.stop()
-            self.timer.start(1) # Inicia o timer que verifica se o ultimo comando foi enviado
-                                    # Se ainda há comando a serem enviados ele reinicia o timer
+        
+            Time_operational_delay = 2500000 # Tempo de delay entre um comando e outro
+            
+            if elapsed_time > Time_operational_delay + 100: #Caso precise habilitar um tempo de delay entre um comando e outro
+                self.sendDMXcommand()
+                last_command_sent = False
                 
+                #Reseta o time.time
+
+                self.timer.stop()
+                self.timer.start(10) # Inicia o timer que verifica se o ultimo comando foi enviado
+                                    # Se ainda há comando a serem enviados ele reinicia o timer
+
             
     def sendLastCommand(self):
         # Envia o ultimo comando DMX enviado após passar o tempo de espera, para garantir que o ultimo comando seja o ultimo montado
         if(Auto_DMX_send):
             global elapsed_time, last_command_sent
-            current_time = time.time() * 1000
-            if (current_time - elapsed_time > 40 and not(last_command_sent)):
+            current_time = time.time_ns()
+            if (not(last_command_sent)):
                 self.sendDMXcommand()
                 last_command_sent = True
                 print("Ultimo comando enviado")
@@ -956,7 +961,9 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         # Envia frame DMX por serial
         self.isRGB_slidder_command = False # Desativa a flag para permitir a chamada da função assembleDMX() durante a alteração dos sliders
         serialComunication.write(bytes(DMX_frame))
+        # print a tamanho de DMX_frame
         print("Comando DMX enviado")
+        self.last_dmx_command_time = time.time_ns()  # Get the current time in microseconds
 
     def autoDMXcommand(self):
         global Auto_DMX_send
