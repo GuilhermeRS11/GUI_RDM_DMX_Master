@@ -306,17 +306,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.frame_size.setText(str(command_len))
 
         # Incluir caixa de texto extra para parametro adicional. O Disc unic branch precisa de dois
-
-        # Adapta os dados para enviar os parametros de comunicação entre a GUI Windows e o módulo Master RDM-DMX
-        Module_header = [0x7E, 0x06, 0x3A]
-        Module_tail = [0x7E, 0x06, 0x3B]
-
-        frame_size = command_len + 3
-        Module_frame_size = [frame_size >> 8, frame_size & 0xFF]  # Separa o Module_frame_size em dois bytes
                 
-        # Faz o envio dos dados RDM
-        command2send = Module_header + Module_frame_size + command2send + Module_tail
-
         # Separa cada byte do comando a ser enviado em cada caixa de texto correspondente
         self.command_1.setText(f"{command2send[0]:0{2}X}")
         self.command_2.setText(f"{command2send[1]:0{2}X}")
@@ -419,6 +409,16 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.command_37.setToolTip("Checksum High")
             self.command_38.setToolTip("Checksum Low")
 
+        # Adapta os dados para enviar os parametros de comunicação entre a GUI Windows e o módulo Master RDM-DMX
+        Module_header = [0x7E, 0x06, 0x3A]
+        Module_tail = [0x7E, 0x06, 0x3B]
+
+        frame_size = command_len + 3
+        Module_frame_size = [frame_size >> 8, frame_size & 0xFF]  # Separa o Module_frame_size em dois bytes
+
+        # Monta o comando que vai ser enviado para o módulo Master RDM-DMX
+        command2send = Module_header + Module_frame_size + command2send + Module_tail
+
     
 
     def clearBoxes(self):
@@ -452,6 +452,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.command_36.setToolTip(" ")
         self.command_37.setToolTip(" ")
         self.command_38.setToolTip(" ")
+
         
     def SendCommand(self):
         global command2send
