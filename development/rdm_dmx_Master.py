@@ -37,7 +37,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             last_command_sent = True
             startTime_for_tictoc = 0
     
-            self.Slots_per_link.setValue(256)        # Inicializa o numero de slots por link com o valor 513
+            self.Slots_per_link.setValue(192)        # Inicializa o numero de slots por link com o valor 513
             self.serialFindPorts()                   # Faz a primeira busca pelas portas serial do sistema
             self.brightness_slider.setValue(255)     # Inicializa o brilho com o valor 100
             self.resolutionValues()                  # Inicializa a resolucao dos dados DMX
@@ -46,7 +46,13 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.rgbSlider()                         # Atualiza os valores das cores atraves da posicao inicial do slider rgb
             self.assembleDMX()                       # Atualiza o comando a ser enviado no DMX   
             self.red_dmx_box.setValue(255)           # Inicializa a caixa de texto com o valor coerente
-
+            
+            self.TBB_label.setToolTip("Tempo entre bytes")
+            self.TBF_label.setToolTip("Tempo entre frames")
+            self.break_time_label.setToolTip("Tempo de break. Deve estar entre 88us e 1s para funcionar")
+            self.slots_number_label.setToolTip("Número de endereços que o frame envia")
+            self.autoSend_dmx_command.setToolTip("Envia o comando automaticamente a cada nova modificação")
+            self.continuousSend_dmx_command.setToolTip("Envia o comando continuamente, um após o outro")
 
         """ 
         #############################################################################################
@@ -91,7 +97,6 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         #############################################################################################
         """
 
-        self.resolution_values.activated.connect(self.reloadValuesAfterResolution)
         self.format_values.activated.connect(self.formatValues)
         self.brightness_slider.valueChanged.connect(self.brightnessSlider)
 
@@ -113,6 +118,10 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         #self.green_dmx_slider.valueChanged.connect(self.assembleDMX)
         self.send_command_dmx.clicked.connect(self.sendDMXcommand)
         self.autoSend_dmx_command.stateChanged.connect(self.autoDMXcommand) 
+        self.TBB_value.valueChanged.connect(self.assembleDMX)
+        self.TBF_value.valueChanged.connect(self.assembleDMX)
+        self.break_time_value.valueChanged.connect(self.assembleDMX)
+        self.continuousSend_dmx_command.stateChanged.connect(self.assembleDMX)
         
         self.DMX_address.setPlaceholderText("1 - FF")  
         self.DMX_address.setMaxLength(2) # Define o limite de caracteres a serem digitados
@@ -691,7 +700,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                 
     """ 
     #############################################################################################
-                                            DMX_frontend
+                                            DMX_backend
     #############################################################################################
     """
     
@@ -708,10 +717,12 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.red_dmx_box.setValue(round(100 * self.red_dmx_slider.value() / maxValue_onResolution))
             self.green_dmx_box.setValue(round(100 * self.green_dmx_slider.value() / maxValue_onResolution))
             self.resolutionValues() 
+
         
     def resolutionValues(self):
         global maxValue_onResolution
-        if(self.resolution_values.currentText() == "8 bits"):
+        #if(self.resolution_values.currentText() == "8 bits"):
+        if(1):
             # Seta todos os campos para terem 8 bits
             maxValue_onResolution = 255
             self.white_dmx_slider.setMaximum(255)
@@ -881,6 +892,15 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         if DMX_address == "0x":
             DMX_address = "0x0"
 
+        if self.continuousSend_dmx_command.isChecked():
+            Countinuous_DMX_send = 1
+        else:
+            Countinuous_DMX_send = 0
+
+        TBB = self.TBB_value.value()
+        TBF = self.TBF_value.value()
+        break_time = self.break_time_value.value()
+
         Slots_per_link = self.Slots_per_link.value()
         white_value = self.white_dmx_slider.value()
         blue_value = self.blue_dmx_slider.value()
@@ -899,17 +919,21 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         DMX_frame.append(Module_header[2])
         DMX_frame.append(Module_frame_size[0])
         DMX_frame.append(Module_frame_size[1])
-
+        DMX_frame.append(TBB)
+        DMX_frame.append(TBF)
+        DMX_frame.append(break_time)
+        DMX_frame.append(Countinuous_DMX_send)
+   
         for i in range(Slots_per_link):
         # Inicializa o frame de envio do DMX
             DMX_frame.append(0x0)
 
         if (literal_eval(DMX_address)) and (literal_eval(DMX_address) < Slots_per_link - 2):
             # Adiciona o valor das cores no endereco solicitado (+5 para compensar header e o tamanho de frame)
-            DMX_frame[literal_eval(DMX_address) + 5] = white_value
-            DMX_frame[literal_eval(DMX_address) + 5 + 1] = green_value
-            DMX_frame[literal_eval(DMX_address) + 5 + 2] = blue_value
-            DMX_frame[literal_eval(DMX_address) + 5 + 3] = red_value  
+            DMX_frame[literal_eval(DMX_address) + 9] = white_value
+            DMX_frame[literal_eval(DMX_address) + 9 + 1] = green_value
+            DMX_frame[literal_eval(DMX_address) + 9 + 2] = blue_value
+            DMX_frame[literal_eval(DMX_address) + 9 + 3] = red_value  
 
         # Adiciona o tail ao module frame
         DMX_frame.append(Module_tail[0])
@@ -922,7 +946,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         
         for i in range(2, Slots_per_link + 1):
             # Mostra o frame DMX a ser enviado                
-            DMX_frame_show = DMX_frame_show + " " + f"{DMX_frame[i-1+5]:0{2}X}"
+            DMX_frame_show = DMX_frame_show + " " + f"{DMX_frame[i-1+9]:0{2}X}"
             if ((i % 32 == 0) and (i != 1) and (i != 0)) or (i == Slots_per_link):
                 # Separa a impressao em grupos de 30 bytes
                 self.DMX_command_label.addItem(DMX_frame_show)
