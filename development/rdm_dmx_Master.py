@@ -930,10 +930,10 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
         if (literal_eval(DMX_address)) and (literal_eval(DMX_address) < Slots_per_link - 2):
             # Adiciona o valor das cores no endereco solicitado (+5 para compensar header e o tamanho de frame)
-            DMX_frame[literal_eval(DMX_address) + 9] = white_value
+            DMX_frame[literal_eval(DMX_address) + 9] = red_value
             DMX_frame[literal_eval(DMX_address) + 9 + 1] = green_value
             DMX_frame[literal_eval(DMX_address) + 9 + 2] = blue_value
-            DMX_frame[literal_eval(DMX_address) + 9 + 3] = red_value  
+            DMX_frame[literal_eval(DMX_address) + 9 + 3] = white_value  
 
         # Adiciona o tail ao module frame
         DMX_frame.append(Module_tail[0])
