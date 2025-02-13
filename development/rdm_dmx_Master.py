@@ -56,18 +56,18 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.autoSend_dmx_command.setToolTip("Automatically sends the command with each new modification")
             self.continuousSend_dmx_command.setToolTip("Continuously sends the command, one after the other")
 
-        # Define o ícone da janela
+        # Set the window icon
         self.setWindowIcon(QIcon("images/masterDMX-Icon.png"))
         
-        # Criar ações para os menus
-        self.actionAbout = QAction("Sobre o Projeto", self)
-        self.actionExit = QAction("Sair", self)
+        # Create actions for the menus
+        self.actionAbout = QAction("About the Project", self)
+        self.actionExit = QAction("Exit", self)
 
-        # Adicionar ações aos menus
+        # Add actions to the menus
         self.menuAjuda.addAction(self.actionAbout)
         self.menuSair.addAction(self.actionExit)
 
-        # Conectar ações aos métodos correspondentes
+        # Connect actions to the corresponding methods
         self.actionAbout.triggered.connect(self.showAbout)
         self.actionExit.triggered.connect(self.quitApp)
 
@@ -152,11 +152,11 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             }   
         }
 
-        # Conectar a comboBox para trocar o idioma
+        # Connect the comboBox to change the language
         self.languageSelect.addItems(["Português", "English"])
         self.languageSelect.currentTextChanged.connect(self.changeLanguage)
 
-        # Define o idioma inicial
+        # Set the initial language
         self.current_language = "Português"
         self.changeLanguage(self.current_language)
 
@@ -243,11 +243,11 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
 
     def changeLanguage(self, language):
-            # Altera os textos conforme o idioma selecionado."""
+            # Change the texts according to the selected language."""
             self.current_language = language
             self.setWindowTitle(self.translations[language].get("title", "RDM DMX Master"))
 
-            # Atualizando os textos dos QLabel
+            # Updating the texts of QLabel
             self.slots_number_label.setText(self.translations[language].get("slots_number_label", "Slots per link"))
             self.Address_label.setText(self.translations[language].get("Address_label", "Fixture Address"))
             self.format_label.setText(self.translations[language].get("format_label", "Format"))
@@ -270,17 +270,17 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.CommandInfo_label.setText(self.translations[language].get("CommandInfo_label", "Command to be sent byte by byte in hexadecimal"))
             self.SlaveRespose_label.setText(self.translations[language].get("SlaveRespose_label", "Slave Response"))
 
-            # Atualiza textos dos botões
+            # Update button texts
             self.send_command.setText(self.translations[language].get("send_command", "Send Command"))
             self.send_command_dmx.setText(self.translations[language].get("send_command", "Send Command"))
 
-            # Atualiza os textos dos menus
+            # Update menu texts
             self.menuAjuda.setTitle(self.translations[language].get("menuAjuda", "Help"))
             self.menuSair.setTitle(self.translations[language].get("menuSair", "Exit"))
             self.actionAbout.setText(self.translations[language].get("actionAbout", "About the Project"))
             self.actionExit.setText(self.translations[language].get("actionExit", "Exit"))
 
-            # Centralizar textos nos labels desejados
+            # Center texts in the desired labels
             self.frameInfo_label.setAlignment(Qt.AlignCenter)
             self.advParam_label.setAlignment(Qt.AlignCenter)
             self.white_label.setAlignment(Qt.AlignRight)
@@ -296,13 +296,13 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.FrameSize_label.setAlignment(Qt.AlignRight)
             self.autoSend_label.setAlignment(Qt.AlignRight)
             
-            # Configurar fonte do advParam_label (tamanho 7, negrito)
+            # Set font for advParam_label (size 7, bold)
             font_adv = QFont()
             font_adv.setPointSize(7)
             font_adv.setBold(True)
             self.advParam_label.setFont(font_adv)
 
-            # Configurar fonte dos nomes das cores (tamanho 12)
+            # Set font for color names (size 12)
             font_colors = QFont()
             font_colors.setPointSize(12)
         
@@ -880,14 +880,14 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             try:
                 s = serial.Serial(port)
                 s.close()
-                result.append(port)                 # Add the found ports to a list
+                result.append(port) # Add the found ports to a list
             except (OSError, serial.SerialException):
                 pass
             
         self.serialPort.clear()
-        self.serialPort.addItems(result)    # Create the box items with the list  
+        self.serialPort.addItems(result) # Create the box items with the list  
         
-        #self.changeSerialPort()             # Automatically select the first serial port   
+        #self.changeSerialPort() # Automatically select the first serial port   
     """ 
     #############################################################################################
                                             DMX_backend
@@ -1153,7 +1153,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             #Resets the time.time
             self.timer.stop()
             self.timer.start(10) # Starts the timer that checks if the last command was sent
-                                # If there are still commands to be sent, it restarts the timer
+                                 # If there are still commands to be sent, it restarts the timer
 
             
     def sendLastCommand(self):
@@ -1201,7 +1201,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                                         bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
 
     def showAbout(self):
-        # Mostra informações sobre o projeto
+        # Show information about the project
         msg = QMessageBox(self)
         msg.setWindowTitle(self.translations[self.current_language].get("about_title", "Sobre o RDM DMX Master"))
 
@@ -1216,11 +1216,11 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             f'<a href="https://github.com/GuilhermeRS11/GUI_RDM_DMX_Master">{self.translations[self.current_language].get("gui_link", "RDM DMX GUI")}</a>'
         )
 
-        msg.setTextInteractionFlags(Qt.TextBrowserInteraction)  # Permite interação com links
+        msg.setTextInteractionFlags(Qt.TextBrowserInteraction)  # Allows interaction with links
         msg.setIcon(QMessageBox.Information)
         msg.setStandardButtons(QMessageBox.Ok)
         msg.exec()
 
     def quitApp(self):
-        # Fecha o aplicativo
+        # Close the application
         self.close()
