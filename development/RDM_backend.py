@@ -13,7 +13,7 @@ def append_hex(teste, hex_number):
     return teste + bytes.fromhex(f"{hex_number:0{2}X}")
 
 def Set_frame(UID_D, UID_S, TN, Message_Length, Port_ID, Message_Count, Sub_Device, CC, PID, PDL, LB_PD, UB_PD):
-    # Organiza o frame de acordo com os parâmetros passados e no formato do RDM
+    # Organize the frame according to the passed parameters and in the RDM format
     frame = []
     frame.append(rdm.E120_SC_RDM)                 # Start Code (SC)
     frame.append(rdm.E120_SC_SUB_MESSAGE)         # Sub-Start Code
@@ -58,7 +58,7 @@ def Set_frame(UID_D, UID_S, TN, Message_Length, Port_ID, Message_Count, Sub_Devi
         frame.append((checksum >> 8) & 0xff)      # Checksum high
         frame.append(checksum & 0xff)             # Checksum low
 
-    elif (PDL == 2):                              # Para o Get_parameter_description
+    elif (PDL == 2):                              # To Get_parameter_description
         frame.append((LB_PD >> 8) & 0xff)
         frame.append(LB_PD & 0xff)
 
@@ -66,14 +66,14 @@ def Set_frame(UID_D, UID_S, TN, Message_Length, Port_ID, Message_Count, Sub_Devi
         frame.append((checksum >> 8) & 0xff)
         frame.append(checksum & 0xff)
 
-    elif (PDL == 1):                              # Para SET_identify_device
+    elif (PDL == 1):                              # To SET_identify_device
         frame.append(LB_PD & 0xff)
 
         checksum = Calc_checksum(25, frame)
         frame.append((checksum >> 8) & 0xff)
         frame.append(checksum & 0xff)
 
-    else:                                         # Para funcões sem PD (disc_mute, disc_un_mute etc.)
+     # For functions without PD (disc_mute, disc_un_mute etc.)
         checksum = Calc_checksum(24, frame)
         frame.append((checksum >> 8) & 0xff)
         frame.append(checksum & 0xff)

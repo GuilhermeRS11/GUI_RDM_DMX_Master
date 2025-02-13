@@ -1,7 +1,9 @@
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QMainWindow, QMessageBox
 from PySide6.QtCore import Qt, QTimer
+from PySide6.QtGui import QFont, QAction, QIcon
 from RDM_DMX_Master_ui import Ui_MainWindow
 from ast import literal_eval
+import webbrowser
 
 import RDM_backend as RDM
 import serial
@@ -54,6 +56,112 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.autoSend_dmx_command.setToolTip("Automatically sends the command with each new modification")
             self.continuousSend_dmx_command.setToolTip("Continuously sends the command, one after the other")
 
+        # Define o ícone da janela
+        self.setWindowIcon(QIcon("images/masterDMX-Icon.png"))
+        
+        # Criar ações para os menus
+        self.actionAbout = QAction("Sobre o Projeto", self)
+        self.actionExit = QAction("Sair", self)
+
+        # Adicionar ações aos menus
+        self.menuAjuda.addAction(self.actionAbout)
+        self.menuSair.addAction(self.actionExit)
+
+        # Conectar ações aos métodos correspondentes
+        self.actionAbout.triggered.connect(self.showAbout)
+        self.actionExit.triggered.connect(self.quitApp)
+
+        """ 
+        #############################################################################################
+                                   Frontend language dictionary area
+        #############################################################################################
+        """
+        self.translations = {
+            "Português": {
+                "slots_number_label": "Slots por link",
+                "Address_label": "Endereço da luminária",
+                "format_label": "Formato",
+                "white_label": "Branco",
+                "blue_label": "Azul",
+                "red_label": "Vermelho",
+                "green_label": "Verde",
+                "frameInfo_label": "Frame a ser enviado em exadecimal",
+                "advParam_label": "Parametros avançados - apenas para testes",
+                "autoSend_label": "Enviar automaticamente",
+                "continuousSend_label": "Enviar continuamente",
+                "language_label": "Idioma",
+                "class_label": "Classe",
+                "param_label": "Parâmetro",
+                "command_label": "Comando",
+                "UID_label": "UID de destino",
+                "UIDSource_label": "UID da fonte",
+                "FrameSize_label": "Tamanho do frame",
+                "CommandInfo_label": "Comando a ser enviado byte a byte em hexadecimal",
+                "SlaveRespose_label": "Resposta do slave",
+                "send_command": "Enviar Comando",
+                "menuAjuda": "Ajuda",
+                "menuSair": "Sair",
+                "about_title": "Sobre o RDM DMX Master",
+                "about_text": "Este software é um controlador para dispositivos DMX e RDM.",
+                "about_requirement": "Para funcionar corretamente, é necessário conectar a placa DMX-Master.",
+                "about_links": "Links do projeto:",
+                "hardware_link": "DMX-Master (Hardware)",
+                "gui_link": "RDM DMX GUI",
+                "actionAbout": "Sobre o Projeto",
+                "actionExit": "Sair",
+                "about_author": "Desenvolvido por: Guilherme Ribeiro Silveira",
+                "about_contact": "Contato: guilhermeribeiro201342@gmail.com"
+              
+            },
+            "English": {
+                "slots_number_label": "Slots per link",
+                "Address_label": "Luminaire Address",
+                "format_label": "Format",
+                "white_label": "White",
+                "blue_label": "Blue",
+                "red_label": "Red",
+                "gree_label": "Green",  
+                "frameInfo_label": "Frame to be sent in hexadecimal",
+                "advParam_label": "Advanced parameters - for testing only",
+                "autoSend_label": "Send automatically",
+                "continuousSend_label": "Send continuously",
+                "language_label": "Language",
+                "serialPort_label": "Serial Port",
+                "class_label": "Class",
+                "param_label": "Parameter",
+                "command_label": "Command",
+                "UID_label": "Destination UID",
+                "UIDSource_label": "Source UID",
+                "FrameSize_label": "Frame Size",
+                "CommandInfo_label": "Command to be sent byte by byte in hexadecimal",
+                "SlaveRespose_label": "Slave Response",
+                "send_command": "Send Command",
+                "menuAjuda": "Help",
+                "menuSair": "Exit",
+                "about_title": "About RDM DMX Master",
+                "about_text": "This software is a controller for DMX and RDM devices.",
+                "about_requirement": "To work properly, the DMX-Master board must be connected.",
+                "about_links": "Project links:",
+                "hardware_link": "DMX-Master (Hardware)",
+                "gui_link": "RDM DMX GUI",
+                "actionAbout": "About the Project",
+                "actionExit": "Exit",
+                "about_author": "Developed by: Guilherme Ribeiro Silveira",
+                "about_contact": "Contact: guilhermeribeiro201342@gmail.com"
+
+            }   
+        }
+
+        # Conectar a comboBox para trocar o idioma
+        self.languageSelect.addItems(["Português", "English"])
+        self.languageSelect.currentTextChanged.connect(self.changeLanguage)
+
+        # Define o idioma inicial
+        self.current_language = "Português"
+        self.changeLanguage(self.current_language)
+
+
+   
         """ 
         #############################################################################################
                                     RDM_frontend sensitivity area
@@ -90,6 +198,8 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.alignement_labels() # Align the command boxes to the center
 
         self.refreshPorts.clicked.connect(self.serialFindPorts) # Update ports when clicking refresh
+
+
 
         """ 
         #############################################################################################
@@ -130,6 +240,86 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.last_dmx_command_time = 0
         # Instantiate the flag that indicates if the command is via RGB slider. It serves to prevent multiple calls to assembleDMX()
         self.isRGB_slidder_command = False
+
+
+    def changeLanguage(self, language):
+            # Altera os textos conforme o idioma selecionado."""
+            self.current_language = language
+            self.setWindowTitle(self.translations[language].get("title", "RDM DMX Master"))
+
+            # Atualizando os textos dos QLabel
+            self.slots_number_label.setText(self.translations[language].get("slots_number_label", "Slots per link"))
+            self.Address_label.setText(self.translations[language].get("Address_label", "Fixture Address"))
+            self.format_label.setText(self.translations[language].get("format_label", "Format"))
+            self.white_label.setText(self.translations[language].get("white_label", "White"))
+            self.blue_label.setText(self.translations[language].get("blue_label", "Blue"))
+            self.red_label.setText(self.translations[language].get("red_label", "Red"))
+            self.green_label.setText(self.translations[language].get("green_label", "Green"))
+            self.frameInfo_label.setText(self.translations[language].get("frameInfo_label", "Frame to be sent in hexadecimal"))
+            self.advParam_label.setText(self.translations[language].get("advParam_label", "Advanced parameters - for testing only"))
+            self.autoSend_label.setText(self.translations[language].get("autoSend_label", "Send automatically"))
+            self.continuousSend_label.setText(self.translations[language].get("continuousSend_label", "Send continuously"))
+            self.language_label.setText(self.translations[language].get("language_label", "Language"))
+            self.serialPort_label.setText(self.translations[language].get("serialPort_label", "Serial Port"))
+            self.class_label.setText(self.translations[language].get("class_label", "Class"))
+            self.param_label.setText(self.translations[language].get("param_label", "Parameter"))
+            self.command_label.setText(self.translations[language].get("command_label", "Command"))
+            self.UID_label.setText(self.translations[language].get("UID_label", "Destination UID"))
+            self.UIDSource_label.setText(self.translations[language].get("UIDSource_label", "Source UID"))
+            self.FrameSize_label.setText(self.translations[language].get("FrameSize_label", "Frame Size"))
+            self.CommandInfo_label.setText(self.translations[language].get("CommandInfo_label", "Command to be sent byte by byte in hexadecimal"))
+            self.SlaveRespose_label.setText(self.translations[language].get("SlaveRespose_label", "Slave Response"))
+
+            # Atualiza textos dos botões
+            self.send_command.setText(self.translations[language].get("send_command", "Send Command"))
+            self.send_command_dmx.setText(self.translations[language].get("send_command", "Send Command"))
+
+            # Atualiza os textos dos menus
+            self.menuAjuda.setTitle(self.translations[language].get("menuAjuda", "Help"))
+            self.menuSair.setTitle(self.translations[language].get("menuSair", "Exit"))
+            self.actionAbout.setText(self.translations[language].get("actionAbout", "About the Project"))
+            self.actionExit.setText(self.translations[language].get("actionExit", "Exit"))
+
+            # Centralizar textos nos labels desejados
+            self.frameInfo_label.setAlignment(Qt.AlignCenter)
+            self.advParam_label.setAlignment(Qt.AlignCenter)
+            self.white_label.setAlignment(Qt.AlignRight)
+            self.blue_label.setAlignment(Qt.AlignRight)
+            self.red_label.setAlignment(Qt.AlignRight)
+            self.green_label.setAlignment(Qt.AlignRight)
+            self.Address_label.setAlignment(Qt.AlignRight)
+            self.UID_label.setAlignment(Qt.AlignRight)
+            self.UIDSource_label.setAlignment(Qt.AlignRight)
+            self.CommandInfo_label.setAlignment(Qt.AlignCenter)
+            self.SlaveRespose_label.setAlignment(Qt.AlignCenter)
+            self.command_label.setAlignment(Qt.AlignRight)
+            self.FrameSize_label.setAlignment(Qt.AlignRight)
+            self.autoSend_label.setAlignment(Qt.AlignRight)
+            
+            # Configurar fonte do advParam_label (tamanho 7, negrito)
+            font_adv = QFont()
+            font_adv.setPointSize(7)
+            font_adv.setBold(True)
+            self.advParam_label.setFont(font_adv)
+
+            # Configurar fonte dos nomes das cores (tamanho 12)
+            font_colors = QFont()
+            font_colors.setPointSize(12)
+        
+            font_infos = QFont()
+            font_infos.setPointSize(9)
+            font_infos.setBold(True)
+            self.CommandInfo_label.setFont(font_infos)
+            self.FrameSize_label.setFont(font_infos)
+            
+            self.white_label.setFont(font_colors)
+            self.blue_label.setFont(font_colors)
+            self.red_label.setFont(font_colors)
+            self.green_label.setFont(font_colors)
+
+
+
+
     """ 
     #############################################################################################
                                             RDM_frontend
@@ -1009,3 +1199,28 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         serialComunication.close()
         serialComunication = serial.Serial(port=self.serialPort.currentText(), baudrate=500000,
                                         bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
+
+    def showAbout(self):
+        # Mostra informações sobre o projeto
+        msg = QMessageBox(self)
+        msg.setWindowTitle(self.translations[self.current_language].get("about_title", "Sobre o RDM DMX Master"))
+
+        msg.setText(self.translations[self.current_language].get("about_text", "Este software é um controlador para dispositivos DMX e RDM.") + "\n\n" +
+                    self.translations[self.current_language].get("about_requirement", "Para funcionar corretamente, é necessário conectar a placa DMX-Master.") + "\n\n" +
+                    self.translations[self.current_language].get("about_author", "Desenvolvido por: Guilherme Ribeiro Silveira") + "\n" +
+                    self.translations[self.current_language].get("about_contact", "Contato: guilhermeribeiro201342@gmail.com"))
+
+        msg.setInformativeText(
+            f"{self.translations[self.current_language].get('about_links', 'Links do projeto:')}<br>"
+            f'<a href="https://github.com/GuilhermeRS11/DMX_Master_STM32">{self.translations[self.current_language].get("hardware_link", "DMX-Master (Hardware)")}</a><br>'
+            f'<a href="https://github.com/GuilhermeRS11/GUI_RDM_DMX_Master">{self.translations[self.current_language].get("gui_link", "RDM DMX GUI")}</a>'
+        )
+
+        msg.setTextInteractionFlags(Qt.TextBrowserInteraction)  # Permite interação com links
+        msg.setIcon(QMessageBox.Information)
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.exec()
+
+    def quitApp(self):
+        # Fecha o aplicativo
+        self.close()

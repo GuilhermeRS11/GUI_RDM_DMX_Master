@@ -105,13 +105,13 @@
      <enum>QTabWidget::North</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="RDM_tab">
      <attribute name="title">
-      <string>Modo RDM</string>
+      <string>RDM</string>
      </attribute>
-     <widget class="QLabel" name="label_9">
+     <widget class="QLabel" name="SlaveRespose_label">
       <property name="geometry">
        <rect>
         <x>5</x>
@@ -133,12 +133,12 @@
        <bool>false</bool>
       </property>
      </widget>
-     <widget class="QLabel" name="label_3">
+     <widget class="QLabel" name="command_label">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>80</x>
         <y>70</y>
-        <width>61</width>
+        <width>81</width>
         <height>20</height>
        </rect>
       </property>
@@ -149,10 +149,10 @@
        </font>
       </property>
       <property name="text">
-       <string>Comando</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Comando&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_2">
+     <widget class="QLabel" name="param_label">
       <property name="geometry">
        <rect>
         <x>330</x>
@@ -226,9 +226,9 @@
      <widget class="QLabel" name="UID_label">
       <property name="geometry">
        <rect>
-        <x>30</x>
+        <x>15</x>
         <y>120</y>
-        <width>91</width>
+        <width>106</width>
         <height>20</height>
        </rect>
       </property>
@@ -267,7 +267,7 @@
        </property>
       </item>
      </widget>
-     <widget class="QLabel" name="UID_S_Label">
+     <widget class="QLabel" name="UIDSource_label">
       <property name="geometry">
        <rect>
         <x>290</x>
@@ -305,7 +305,7 @@
      <widget class="QLabel" name="Subdevice_label">
       <property name="geometry">
        <rect>
-        <x>300</x>
+        <x>305</x>
         <y>160</y>
         <width>71</width>
         <height>20</height>
@@ -359,7 +359,7 @@
        </property>
       </item>
      </widget>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="class_label">
       <property name="geometry">
        <rect>
         <x>190</x>
@@ -1465,7 +1465,7 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QLabel" name="label_20">
+     <widget class="QLabel" name="CommandInfo_label">
       <property name="geometry">
        <rect>
         <x>140</x>
@@ -1689,17 +1689,17 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QLabel" name="label_5">
+     <widget class="QLabel" name="FrameSize_label">
       <property name="geometry">
        <rect>
         <x>190</x>
         <y>260</y>
-        <width>111</width>
-        <height>20</height>
+        <width>116</width>
+        <height>16</height>
        </rect>
       </property>
       <property name="text">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Tamanho do frame&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Tamanho do frame&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_59">
@@ -2295,9 +2295,9 @@
       <enum>Qt::LeftToRight</enum>
      </property>
      <attribute name="title">
-      <string>Modo DMX</string>
+      <string>DMX</string>
      </attribute>
-     <widget class="QLabel" name="label_14">
+     <widget class="QLabel" name="green_label">
       <property name="geometry">
        <rect>
         <x>375</x>
@@ -2333,7 +2333,7 @@
       <property name="geometry">
        <rect>
         <x>230</x>
-        <y>610</y>
+        <y>600</y>
         <width>121</width>
         <height>24</height>
        </rect>
@@ -2368,7 +2368,7 @@
        <number>255</number>
       </property>
      </widget>
-     <widget class="QLabel" name="label_7">
+     <widget class="QLabel" name="blue_label">
       <property name="geometry">
        <rect>
         <x>385</x>
@@ -2387,13 +2387,13 @@
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Azul&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_16">
+     <widget class="QLabel" name="white_label">
       <property name="geometry">
        <rect>
-        <x>165</x>
-        <y>115</y>
-        <width>61</width>
-        <height>31</height>
+        <x>150</x>
+        <y>120</y>
+        <width>76</width>
+        <height>21</height>
        </rect>
       </property>
       <property name="font">
@@ -2437,7 +2437,7 @@
        <bool>true</bool>
       </property>
      </widget>
-     <widget class="QLabel" name="label_17">
+     <widget class="QLabel" name="Address_label">
       <property name="geometry">
        <rect>
         <x>285</x>
@@ -2453,16 +2453,16 @@
        </font>
       </property>
       <property name="text">
-       <string>Endereço da luminária</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Endereço da luminária&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_18">
+     <widget class="QLabel" name="red_label">
       <property name="geometry">
        <rect>
-        <x>155</x>
-        <y>190</y>
-        <width>71</width>
-        <height>36</height>
+        <x>145</x>
+        <y>195</y>
+        <width>81</width>
+        <height>21</height>
        </rect>
       </property>
       <property name="font">
@@ -2684,14 +2684,14 @@ QSlider::groove:horizontal
      <widget class="QCheckBox" name="autoSend_dmx_command">
       <property name="geometry">
        <rect>
-        <x>45</x>
-        <y>600</y>
-        <width>155</width>
-        <height>26</height>
+        <x>185</x>
+        <y>595</y>
+        <width>26</width>
+        <height>36</height>
        </rect>
       </property>
       <property name="text">
-       <string>Enviar automaticamente</string>
+       <string/>
       </property>
      </widget>
      <widget class="Line" name="line_3">
@@ -2739,7 +2739,7 @@ QSlider::groove:horizontal
        <string> 0x</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_15">
+     <widget class="QLabel" name="frameInfo_label">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -2760,7 +2760,7 @@ QSlider::groove:horizontal
      <widget class="QLabel" name="slots_number_label">
       <property name="geometry">
        <rect>
-        <x>100</x>
+        <x>95</x>
         <y>55</y>
         <width>86</width>
         <height>20</height>
@@ -2773,7 +2773,7 @@ QSlider::groove:horizontal
        </font>
       </property>
       <property name="text">
-       <string>Slots por link</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Slots por link&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
      <widget class="QListWidget" name="DMX_command_label">
@@ -2823,7 +2823,7 @@ QSlider::groove:horizontal
        <rect>
         <x>35</x>
         <y>125</y>
-        <width>91</width>
+        <width>86</width>
         <height>22</height>
        </rect>
       </property>
@@ -2968,12 +2968,12 @@ QSlider::groove:horizontal
        <rect>
         <x>385</x>
         <y>600</y>
-        <width>155</width>
+        <width>26</width>
         <height>26</height>
        </rect>
       </property>
       <property name="text">
-       <string>Enviar continuamente</string>
+       <string/>
       </property>
      </widget>
      <widget class="QSpinBox" name="TBB_value">
@@ -3107,7 +3107,7 @@ QSlider::groove:horizontal
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QLabel" name="TBB_label_2">
+     <widget class="QLabel" name="advParam_label">
       <property name="geometry">
        <rect>
         <x>5</x>
@@ -3124,6 +3124,32 @@ QSlider::groove:horizontal
       </property>
       <property name="text">
        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:7pt; font-weight:700;&quot;&gt;Parametros avançados - apenas para testes&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="autoSend_label">
+      <property name="geometry">
+       <rect>
+        <x>25</x>
+        <y>605</y>
+        <width>151</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;right&quot;&gt;Enviar automaticamente&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="continuousSend_label">
+      <property name="geometry">
+       <rect>
+        <x>405</x>
+        <y>605</y>
+        <width>141</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Enviar continuamente</string>
       </property>
      </widget>
     </widget>
@@ -3178,7 +3204,7 @@ QSlider::groove:horizontal
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="serialPort_label">
     <property name="geometry">
      <rect>
       <x>380</x>
@@ -3191,22 +3217,22 @@ QSlider::groove:horizontal
      <string>Porta serial</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="serialPort_2">
+   <widget class="QComboBox" name="languageSelect">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>680</y>
-      <width>68</width>
+      <width>91</width>
       <height>21</height>
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_65">
+   <widget class="QLabel" name="language_label">
     <property name="geometry">
      <rect>
-      <x>115</x>
+      <x>140</x>
       <y>680</y>
-      <width>41</width>
+      <width>61</width>
       <height>21</height>
      </rect>
     </property>
