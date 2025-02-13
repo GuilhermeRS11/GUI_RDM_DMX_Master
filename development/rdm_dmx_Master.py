@@ -9,7 +9,7 @@ import time
 
 Flag_just_once = True
 
-# Inicializa parametro que sera compartilhado entre as funcoes
+# Initialize parameter to be shared between functions
 command2send = []
 DMX_frame = []
 serialComunication = serial.Serial(baudrate=500000, bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
@@ -24,7 +24,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.sendLastCommand)
 
-        # Executa os camandos abaixo apenas na inicialização do app
+        # Execute the commands below only at app initialization
         global Flag_just_once
         global Slots_per_link, command_len
         global Auto_DMX_send
@@ -37,30 +37,30 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             last_command_sent = True
             startTime_for_tictoc = 0
     
-            self.Slots_per_link.setValue(192)        # Inicializa o numero de slots por link com o valor 513
-            self.serialFindPorts()                   # Faz a primeira busca pelas portas serial do sistema
-            self.brightness_slider.setValue(255)     # Inicializa o brilho com o valor 100
-            self.resolutionValues()                  # Inicializa a resolucao dos dados DMX
-            self.brightnessSlider()                  # Inicializa o brilho 
-            self.caixaCommand()                      # Atualiza os campos de exibicao com os valores zerados
-            self.rgbSlider()                         # Atualiza os valores das cores atraves da posicao inicial do slider rgb
-            self.assembleDMX()                       # Atualiza o comando a ser enviado no DMX   
-            self.red_dmx_box.setValue(255)           # Inicializa a caixa de texto com o valor coerente
+            self.Slots_per_link.setValue(192)        # Initialize the number of slots per link with value 513
+            self.serialFindPorts()                   # Perform the first search for system serial ports
+            self.brightness_slider.setValue(255)     # Initialize brightness with value 100
+            self.resolutionValues()                  # Initialize DMX data resolution
+            self.brightnessSlider()                  # Initialize brightness 
+            self.caixaCommand()                      # Update display fields with zeroed values
+            self.rgbSlider()                         # Update color values through initial rgb slider position
+            self.assembleDMX()                       # Update the command to be sent in DMX   
+            self.red_dmx_box.setValue(255)           # Initialize the text box with the coherent value
             
-            self.TBB_label.setToolTip("Tempo entre bytes")
-            self.TBF_label.setToolTip("Tempo entre frames")
-            self.break_time_label.setToolTip("Tempo de break. Deve estar entre 88us e 1s para funcionar")
-            self.slots_number_label.setToolTip("Número de endereços que o frame envia")
-            self.autoSend_dmx_command.setToolTip("Envia o comando automaticamente a cada nova modificação")
-            self.continuousSend_dmx_command.setToolTip("Envia o comando continuamente, um após o outro")
+            self.TBB_label.setToolTip("Time between bytes")
+            self.TBF_label.setToolTip("Time between frames")
+            self.break_time_label.setToolTip("Break time. Must be between 88us and 1s to work")
+            self.slots_number_label.setToolTip("Number of addresses the frame sends")
+            self.autoSend_dmx_command.setToolTip("Automatically sends the command with each new modification")
+            self.continuousSend_dmx_command.setToolTip("Continuously sends the command, one after the other")
 
         """ 
         #############################################################################################
-                                    Area de sensitividade do RDM_frontend
+                                    RDM_frontend sensitivity area
         #############################################################################################
         """
 
-        # Identifica a ação dos principais elementos graficos
+        # Identify the action of the main graphical elements
         self.classe.activated.connect(self.ChangeParameter)
         self.classe.activated.connect(self.caixaCommand)
         self.parametro.activated.connect(self.clearAddParam)
@@ -69,7 +69,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.menuSair.triggered.connect(self.quit)
         self.serialPort.activated.connect(self.changeSerialPort)
 
-        # Atualização dos bytes das caixas de exibição
+        # Update the bytes of the display boxes
         self.destination_UID.textEdited.connect(self.caixaCommand)
         self.source_UID.textEdited.connect(self.caixaCommand)
         self.sub_device.textEdited.connect(self.caixaCommand)
@@ -77,23 +77,23 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.add_param_1.textEdited.connect(self.caixaCommand)
         self.add_param_2.textEdited.connect(self.caixaCommand)
 
-        # Definição do numero maximo de caracteres em cada parametro
+        # Define the maximum number of characters in each parameter
         self.source_UID.setMaxLength(12)
         self.destination_UID.setMaxLength(12)
         self.port_ID.setMaxLength(2)
-        self.sub_device.setMaxLength(4) # É preciso especificar o range deste em cada comando
+        self.sub_device.setMaxLength(4) # It is necessary to specify the range of this in each command
 
         self.port_ID.setPlaceholderText("01 - FF")
         self.source_UID.setPlaceholderText("0 - FFFFFFFFFFFF")
         self.destination_UID.setPlaceholderText("0 - FFFFFFFFFFFF")
 
-        self.alignement_labels() # Alinha as caixas de comando ao centro
+        self.alignement_labels() # Align the command boxes to the center
 
-        self.refreshPorts.clicked.connect(self.serialFindPorts) # Atualiza as portar quando clicar no refresh
+        self.refreshPorts.clicked.connect(self.serialFindPorts) # Update ports when clicking refresh
 
         """ 
         #############################################################################################
-                                    Area de sensitividade do DMX_frontend
+                                    DMX_frontend sensitivity area
         #############################################################################################
         """
 
@@ -124,13 +124,12 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.continuousSend_dmx_command.stateChanged.connect(self.assembleDMX)
         
         self.DMX_address.setPlaceholderText("1 - FF")  
-        self.DMX_address.setMaxLength(2) # Define o limite de caracteres a serem digitados
+        self.DMX_address.setMaxLength(2) # Define the character limit to be entered
 
-        # Instanciação do timer para enviar comandando DMX automaticamente, espaçados de algum tempo
+        # Instantiate the timer to send DMX commands automatically, spaced by some time
         self.last_dmx_command_time = 0
-        # Instanciação da flag que indica se o commando é via RGB slidder. Serve para impedir que multiplas chamadas do assembleDMX()
+        # Instantiate the flag that indicates if the command is via RGB slider. It serves to prevent multiple calls to assembleDMX()
         self.isRGB_slidder_command = False
-        
     """ 
     #############################################################################################
                                             RDM_frontend
@@ -139,9 +138,9 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
     def ChangeParameter(self):
         classe = self.classe.currentText()
-        self.clearAddParam() # Zera as caixas dos parametros extras
+        self.clearAddParam() # Clear the extra parameter boxes
         
-        # Aproveitando a chamada para atualizar os demais campos que devem ou não ser ativados
+        # Update other fields that should or should not be activated
         if(classe == "DISC"):
             self.parametro.clear()
             self.parametro.addItems(["Unique Branch","Mute","Unmute"]) 
@@ -150,7 +149,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.parametro.clear()
             self.parametro.addItems(["Supported parameters","Parameter description","Device info", "Software version label", "DMX start address", "Identify device"])
 
-        else:   # Então é comando SET
+        else:   # Then it is a SET command
             self.parametro.clear()
             self.parametro.addItems(["DMX start address","Identify device"])
 
@@ -166,19 +165,19 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         classe = self.classe.currentText()
         parameter = self.parametro.currentText()
 
-        self.clearBoxes() # Zera as caixas de texto antes de escrever qualquer coisa
+        self.clearBoxes() # Clear the text boxes before writing anything
 
-        # Anexa o valor das caixas de texto a 0x para poder converter posteriormente usando o "literal_eval"
+        # Append the value of the text boxes to 0x to convert later using "literal_eval"
         destination_UID = "0x" + self.destination_UID.displayText()
         source_UID = "0x" + self.source_UID.displayText()
         sub_device = "0x" + self.sub_device.displayText()
         port_id = "0x" + self.port_ID.displayText()
-        # Parametro adicionais que são usados apenas em alguns comandos, e variam dependendo do comando
+        # Additional parameters that are used only in some commands and vary depending on the command
         add_param_1 = "0x" + self.add_param_1.displayText()
         add_param_2 = "0x" + self.add_param_2.displayText()
-        TN = 0 # Até o momento não foi implementado, então coloquei o valor padrão como 0
+        TN = 0 # So far it has not been implemented, so I set the default value to 0
 
-        # Inicializa as caixas de texto caso o valor delas esteja vazio
+        # Initialize the text boxes if their value is empty
         if destination_UID == "0x":
             destination_UID = "0x0"
         if source_UID == "0x":
@@ -192,7 +191,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         if add_param_2 == "0x":
             add_param_2 = "0x0"
             
-        # Converte o valor das caixes de texto de str para int
+        # Convert the value of the text boxes from str to int
         destination_UID = literal_eval(destination_UID)
         source_UID = literal_eval(source_UID)
         sub_device = literal_eval(sub_device)
@@ -200,7 +199,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         add_param_1 = literal_eval(add_param_1)
         add_param_2 = literal_eval(add_param_2)
 
-        # Aproveitando a chamada para atualizar os demais campos que devem ou não ser ativados
+        # Taking advantage of the call to update other fields that should or should not be activated
         if(classe == "SET"):
             if(parameter == "DMX start address"):
                 command2send = RDM.SET_dmx_start_address(destination_UID, source_UID, TN, port_id, sub_device, add_param_1)
@@ -213,7 +212,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                 self.add_param_1.setMaxLength(4)
                 self.sub_device.setEnabled(True)
             
-            else: # Então é Identify device
+             # Then it is Identify device
                 command2send = RDM.SET_identify_device(destination_UID, source_UID, TN, port_id, sub_device, add_param_1)
                 self.add_param_1.setEnabled(True)
                 self.add_param_2.setEnabled(False)  
@@ -285,7 +284,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                 self.add_param_2_label.setText("UB ID")
                 self.add_param_1.setPlaceholderText("0 - FFFFFFFFFFFF")
                 self.add_param_2.setPlaceholderText("0 - FFFFFFFFFFFF")  
-                self.add_param_1.setMaxLength(12) # Define o limite de caracteres a serem digitados
+                self.add_param_1.setMaxLength(12) # Sets the character limit for input
                 self.add_param_2.setMaxLength(12)
                 self.sub_device.setEnabled(False)
                 self.sub_device.setText("")
@@ -311,12 +310,12 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
         #self.slave_Response.setText(command2send)
         
-        command_len = command2send[2] + 2 # Incluir caixa de texto para mostrar o tamanho do frame
+        command_len = command2send[2] + 2 # Include text box to show the frame size
         self.frame_size.setText(str(command_len))
 
-        # Incluir caixa de texto extra para parametro adicional. O Disc unic branch precisa de dois
-                
-        # Separa cada byte do comando a ser enviado em cada caixa de texto correspondente
+        # Include extra text box for additional parameter. The Disc unique branch needs two
+            
+        # Separate each byte of the command to be sent into the corresponding text box
         self.command_1.setText(f"{command2send[0]:0{2}X}")
         self.command_2.setText(f"{command2send[1]:0{2}X}")
         self.command_3.setText(f"{command2send[2]:0{2}X}")
@@ -361,7 +360,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.command_37.setText(f"{command2send[36]:0{2}X}")
             self.command_38.setText(f"{command2send[37]:0{2}X}")
 
-        # Define as tooltips de cada caixa de texto
+        # Set the tooltips for each text box
         self.command_1.setToolTip("Start code")
         self.command_2.setToolTip("Sub Start code")
         self.command_3.setToolTip("Message Length")
@@ -418,14 +417,14 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             self.command_37.setToolTip("Checksum High")
             self.command_38.setToolTip("Checksum Low")
 
-        # Adapta os dados para enviar os parametros de comunicação entre a GUI Windows e o módulo Master RDM-DMX
+        # Adapt the data to send the communication parameters between the Windows GUI and the RDM-DMX Master module
         Module_header = [0x7E, 0x06, 0x3A]
         Module_tail = [0x7E, 0x06, 0x3B]
 
         frame_size = command_len + 3
-        Module_frame_size = [frame_size >> 8, frame_size & 0xFF]  # Separa o Module_frame_size em dois bytes
+        Module_frame_size = [frame_size >> 8, frame_size & 0xFF]  # Split the Module_frame_size into two bytes
 
-        # Monta o comando que vai ser enviado para o módulo Master RDM-DMX
+        # Assemble the command to be sent to the RDM-DMX Master module
         command2send = Module_header + Module_frame_size + command2send + Module_tail
 
     
@@ -468,50 +467,52 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         global serialComunication
         global command_len
 
-        #printa byte a byte o comando enviado:
+        # Print byte by byte the sent command:
         for i in range(len(command2send)):
             print(f"{command2send[i]:0{2}X}", end=" ")
         print("\n")
 
         serialComunication.write(bytes(command2send))
-        print("Comando RDM enviado")
+        # Print the sent RDM command:
+        print("RDM command sent")
 
-        # Faz o recebimento dos dados RDM
+        # Receive RDM data
         receive = serialComunication.read(300)
 
-        # Testa o recebimento de um frame de resposta a um Disc_unique_branch
+        # Test receiving a response frame to a Disc_unique_branch
         #receive = [0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xaa, 0xba, 0x57, 0xbe, 0x75, 0xfe, 0x57, 0xfa, 0x7d, 0xba, 0xdf, 0xbe, 0xfd, 0xaa, 0x5d, 0xee, 0x75]
 
-        # Testa o recebimento de um frame de resposta a um RDM padrao
+        # Test receiving a response frame to a standard RDM
         #receive = [0xcc, 0x01, 0x19, 0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xcb, 0xa9, 0x87, 0x65, 0x43, 0x21, 0x00, 0x01, 0x00, 0x00, 0x00, 0x20, 0x00, 0x30, 0x01, 0x04, 0x06, 0x6a]
         self.responseProcess(receive)
         
     def responseProcess(self, receive):
-        # Ajusta os dados recebidos para exibir na tela 
+        # Adjust the received data to display on the screen
         self.slaveResponse.clear()
 
         if(len(receive) == 0):
-        # Informa que nada foi recebido
-            self.slaveResponse.addItem("Nenhum dado recebido")
+        # Inform that nothing was received
+            self.slaveResponse.addItem("No data received")
             return
         
         elif receive[0] == 0xFE:
-        # Processa frame de resposta a um Disc_unique_branch
+        # Process response frame to a Disc_unique_branch
             checksum = 0
-            string_receive = "Frame recebido: "
+            # Display the received frame
+            string_receive = "Frame received: "
             for i in range(len(receive)):
                 string_receive = string_receive + f"{receive[i]:0{2}X}" + " "
                 if i > 7 and i < 20:
                     checksum = checksum + receive[i]
 
-            # Exibe o frame recebido
+            # Display the received frame
             self.slaveResponse.addItem(string_receive)
 
-            # Exibe o numero de bytes recebidos
-            string_receive = "Numero de bytes recebidos: " + str(len(receive))
+            # Display the number of bytes received
+            string_receive = "Number of bytes received: " + str(len(receive))
             self.slaveResponse.addItem(string_receive)
             
-            # Faz a decodificacao dos dados
+            # Decode the data
             decodeData = [0, 0, 0, 0, 0, 0, 0, 0]
             decodeData[0] = receive[8] & receive[9]
             decodeData[1] = receive[10] & receive[11]
@@ -522,11 +523,11 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             decodeData[6] = receive[20] & receive[21]
             decodeData[7] = receive[22] & receive[23]
 
-            string_receive = "Dados decodificados: "
+            string_receive = "Decoded data: "
             for i in range(8):
                 string_receive = string_receive + f"{decodeData[i]:0{2}X}" + " "
             
-            # Exibe os dados decodificados
+            # Display the decoded data
             self.slaveResponse.addItem(string_receive)
 
             #print(checksum)
@@ -536,48 +537,48 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             else:
                 string_receive = "Checksum: ERROR"
             
-            # Exibe o resultado do checksum
+            # Display the checksum result
             self.slaveResponse.addItem(string_receive)
 
             string_receive = "Source UID: "
             for i in range(6):
                 string_receive = string_receive + f"{decodeData[i]:0{2}X}" + " "
 
-            # Exibe o UID   
+            # Display the UID   
             self.slaveResponse.addItem(string_receive)
 
         elif receive[0] == 0xCC:
             checksum = 0
-            string_receive = "Frame recebido: "
+            string_receive = "Frame received: "
             frameSize = len(receive)
 
             for i in range(frameSize):
                 string_receive = string_receive + f"{receive[i]:0{2}X}" + " "
                 if (i % 27 == 0) and (i != 0): 
-                    # Separa a linha quando tem mais de 27 elementos
+                    # Separate the line when it has more than 27 elements
                     self.slaveResponse.addItem(string_receive)
                     string_receive = "                           "
 
                 if i < frameSize - 2:
-                    # Calcula o checksum
+                    # Calculate the checksum
                     checksum = checksum + receive[i]
 
-            # Exibe o frame recebido
+            # Display the received frame
             self.slaveResponse.addItem(string_receive)
 
-            # Exibe o numero de bytes recebidos
-            string_receive = "Numero de bytes recebidos: " + str(frameSize)
+            # Display the number of bytes received
+            string_receive = "Number of bytes received: " + str(frameSize)
             self.slaveResponse.addItem(string_receive)
 
-            # Exibe o resultado do tamanho do frame
+            # Display the result of the frame size
             if frameSize == receive[2] + 2:
-                string_receive = "Tamanho do frame: OK"
+                string_receive = "Frame size: OK"
             else:
-                string_receive = "Tamanho do frame: ERROR"
+                string_receive = "Frame size: ERROR"
 
             self.slaveResponse.addItem(string_receive)
 
-            # Exibe o resultado do checksum
+            # Display the checksum result
             if ((receive[frameSize - 2] << 8) | receive[frameSize - 1]) == checksum:
                 string_receive = "Checksum: OK"
             else:
@@ -585,41 +586,41 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
             self.slaveResponse.addItem(string_receive)
 
-            # Exibe o UID
+            # Display the UID
             string_receive = "Source UID: "
             for i in range(6):
                 string_receive = string_receive + f"{receive[i + 9]:0{2}X}" + " "
 
             self.slaveResponse.addItem(string_receive)
 
-            # Exibe o tipo de resposta
+            # Display the response type
             if receive[16] == 0x00:
-                string_receive = "Tipo de resposta: ACK"
+                string_receive = "Response type: ACK"
             elif receive[16] == 0x01:
-                string_receive = "Tipo de resposta: ACK_TIMER"
+                string_receive = "Response type: ACK_TIMER"
             elif receive[16] == 0x02:
-                string_receive = "Tipo de resposta: NACK_REASON"
+                string_receive = "Response type: NACK_REASON"
             elif receive[16] == 0x03:
-                string_receive = "Tipo de resposta: ACK_OVERFLOW"
+                string_receive = "Response type: ACK_OVERFLOW"
 
             self.slaveResponse.addItem(string_receive)
 
-            # Exibe o tamanho do PD
+            # Display the size of the PD
             pdSize = receive[23]
-            string_receive = "Tamanho do PD: " + str(pdSize)
+            string_receive = "PD Size: " + str(pdSize)
             
             self.slaveResponse.addItem(string_receive)
 
-            # Exibe o PD
+            # Display the PD
             #if (receive[20] == 0x21) and (receive[21] == 0x00):
-                #string_receive = "Endereço DMX: "
+                #string_receive = "DMX Address: "
             #else:    
                 #string_receive = "Parameter Data: "
             string_receive = "Parameter Data: "
             for i in range(pdSize):
                 string_receive = string_receive + f"{receive[frameSize - 2 - pdSize + i]:0{2}X}" + " "
                 if (i % 27 == 0) and (i != 0): 
-                    # Separa a linha quando tem mais de 27 elementos
+                    # Separate the line when it has more than 27 elements
                     self.slaveResponse.addItem(string_receive)
                     string_receive = "                           "
 
@@ -634,7 +635,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         self.add_param_2.setPlaceholderText("")
     
     def alignement_labels(self):
-        # Alinha as caixas de comando ao centro
+        # Align the command boxes to the center
         self.add_param_1_label.setAlignment(Qt.AlignRight)
         self.add_param_2_label.setAlignment(Qt.AlignRight)
 
@@ -681,7 +682,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
     def serialFindPorts(self):
         global serialComunication
-        serialComunication.close()     # Fecha a porta serial atual, se não ela não aparece na lista
+        serialComunication.close()     # Close the current serial port, otherwise it won't appear in the list
 
         ports = ['COM%s' % (i + 1) for i in range(256)]
         result = []
@@ -689,15 +690,14 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             try:
                 s = serial.Serial(port)
                 s.close()
-                result.append(port)                 # Coloca as portas encontradas em uma lista
+                result.append(port)                 # Add the found ports to a list
             except (OSError, serial.SerialException):
                 pass
             
         self.serialPort.clear()
-        self.serialPort.addItems(result)    # Cria os itens da box com a lista  
+        self.serialPort.addItems(result)    # Create the box items with the list  
         
-        #self.changeSerialPort()             # Já seleciona a primeira porta serial   
-                
+        #self.changeSerialPort()             # Automatically select the first serial port   
     """ 
     #############################################################################################
                                             DMX_backend
@@ -723,7 +723,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         global maxValue_onResolution
         #if(self.resolution_values.currentText() == "8 bits"):
         if(1):
-            # Seta todos os campos para terem 8 bits
+            # Set all fields to have 8 bits
             maxValue_onResolution = 255
             self.white_dmx_slider.setMaximum(255)
             self.blue_dmx_slider.setMaximum(255)
@@ -745,7 +745,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                 self.green_dmx_box.setMaximum(100)
                         
         else:
-            # Seta todos os campos para terem 16 bits
+            # Set all fields to have 16 bits
             maxValue_onResolution = 65535
             self.white_dmx_box.setMaximum(65535)
             self.white_dmx_slider.setMaximum(65535)
@@ -771,8 +771,8 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
                 self.green_dmx_box.setMaximum(100)
 
     def reloadValuesAfterResolution(self):
-        # Atualiza os valores dos sliders e boxes apos alteração da resolução
-        # Converte o valor de 8bits para 16bits e vice versa, mantendo a proporção, armazenando o valor atual antes de alterar a resolução
+        # Update the values of sliders and boxes after changing the resolution
+        # Convert the value from 8 bits to 16 bits and vice versa, maintaining the proportion, storing the current value before changing the resolution
         RGBAtual = self.RGB_dmx_slider.value()
         brightnessAtual = self.brightness_slider.value()
      
@@ -863,7 +863,7 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
             blue = round((maxValue_onResolution * 3 + 2 - rgb) * brightness)
             green = 0
 
-        self.isRGB_slidder_command = True # Ativa a flag para não chamar a função assembleDMX() durante a alteração dos sliders
+        self.isRGB_slidder_command = True # Activates the flag to not call the assembleDMX() function during slider adjustments
         self.red_dmx_slider.setValue(red)
         self.blue_dmx_slider.setValue(blue)
         self.green_dmx_slider.setValue(green)
@@ -872,19 +872,19 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
 
     def brightnessSlider(self):
         global brightness
-        brightness = self.brightness_slider.value() / maxValue_onResolution # Valor máximo que podem assumir
+        brightness = self.brightness_slider.value() / maxValue_onResolution # Maximum value they can assume
         self.brightness_percentage_box.setText(str(round(brightness * 100)) + "%")
-        # Atualiza os valores dos sliders e boxes apos alteração do brilho
+        # Update the values of sliders and boxes after changing the brightness
         self.rgbSlider()
 
     def assembleDMX(self):
-        # Monta o quadro DMX 
+        # Assembles the DMX frame
         global DMX_frame
         global Slots_per_link
         global Auto_DMX_send 
         global frame_size
 
-        # Adiciona cabeçalho e rodapé que são especificos para essa interface se comunicar com módulo DMX
+        # Adds header and footer specific for this interface to communicate with the DMX module
         Module_header = [0x7E, 0x06, 0x3A]
         Module_tail = [0x7E, 0x06, 0x3B]
        
@@ -907,13 +907,13 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         green_value = self.green_dmx_slider.value()
         red_value = self.red_dmx_slider.value()
 
-        # Define o tamanho do frame a ser enviado e adapta para caber um 2 bytes
+        # Defines the frame size to be sent and adapts to fit in 2 bytes
         frame_size = Slots_per_link + 3
-        Module_frame_size = [frame_size >> 8, frame_size & 0xFF]  # Separa o Module_frame_size em dois bytes
+        Module_frame_size = [frame_size >> 8, frame_size & 0xFF]  # Splits the Module_frame_size into two bytes
        
-        DMX_frame.clear()     # Limpa o conteudo do frame antes de atribuir qualquer valor
+        DMX_frame.clear()     # Clears the frame content before assigning any value
 
-        # Adiciona o header e o tamanho do frame ao module frame
+        # Adds the header and frame size to the module frame
         DMX_frame.append(Module_header[0])
         DMX_frame.append(Module_header[1])
         DMX_frame.append(Module_header[2])
@@ -925,74 +925,74 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         DMX_frame.append(Countinuous_DMX_send)
    
         for i in range(Slots_per_link):
-        # Inicializa o frame de envio do DMX
+        # Initializes the DMX send frame
             DMX_frame.append(0x0)
 
         if (literal_eval(DMX_address)) and (literal_eval(DMX_address) < Slots_per_link - 2):
-            # Adiciona o valor das cores no endereco solicitado (+5 para compensar header e o tamanho de frame)
+            # Adds the color values at the requested address (+5 to compensate for header and frame size)
             DMX_frame[literal_eval(DMX_address) + 9] = red_value
             DMX_frame[literal_eval(DMX_address) + 9 + 1] = green_value
             DMX_frame[literal_eval(DMX_address) + 9 + 2] = blue_value
             DMX_frame[literal_eval(DMX_address) + 9 + 3] = white_value  
 
-        # Adiciona o tail ao module frame
+        # Adds the tail to the module frame
         DMX_frame.append(Module_tail[0])
         DMX_frame.append(Module_tail[1])
         DMX_frame.append(Module_tail[2])
 
-        # Inicializa a label de comando a ser iniciado
+        # Initializes the command label to be started
         self.DMX_command_label.clear()
         DMX_frame_show = "000 - 00"
         
         for i in range(2, Slots_per_link + 1):
-            # Mostra o frame DMX a ser enviado                
+            # Shows the DMX frame to be sent                
             DMX_frame_show = DMX_frame_show + " " + f"{DMX_frame[i-1+9]:0{2}X}"
             if ((i % 32 == 0) and (i != 1) and (i != 0)) or (i == Slots_per_link):
-                # Separa a impressao em grupos de 30 bytes
+                # Separates the print into groups of 30 bytes
                 self.DMX_command_label.addItem(DMX_frame_show)
                 DMX_frame_show = f"{i:0{3}}" + " -"
 
         if Auto_DMX_send:
-            # Envia automaticamente os comandos se a caixa estiver marcada e verifica se já é tempo de enviar para a serial 
+            # Automatically sends commands if the box is checked and checks if it's time to send to the serial 
             global last_command_sent
                           
-            #if elapsed_time > Time_operational_delay + 100: #Caso precise habilitar um tempo de delay entre um comando e outro
+            #if elapsed_time > Time_operational_delay + 100: #If you need to enable a delay time between one command and another
             self.sendDMXcommand()
             last_command_sent = False
             
-            #Reseta o time.time
+            #Resets the time.time
             self.timer.stop()
-            self.timer.start(10) # Inicia o timer que verifica se o ultimo comando foi enviado
-                                # Se ainda há comando a serem enviados ele reinicia o timer
+            self.timer.start(10) # Starts the timer that checks if the last command was sent
+                                # If there are still commands to be sent, it restarts the timer
 
             
     def sendLastCommand(self):
-        # Envia o ultimo comando DMX enviado após passar o tempo de espera, para garantir que o ultimo comando seja o ultimo montado
+        # Sends the last DMX command after the waiting time, to ensure that the last command is the last one assembled
         if(Auto_DMX_send):
             global last_command_sent
             if (not(last_command_sent)):
                 self.timer.stop()
                 self.sendDMXcommand()
                 last_command_sent = True
-                #print("Ultimo comando enviado")
+                #print("Last command sent")
                 
 
     def sendDMXcommand(self): 
-        # Envia frame DMX por serial
-        self.isRGB_slidder_command = False # Desativa a flag para permitir a chamada da função assembleDMX() durante a alteração dos sliders
+        # Send DMX frame via serial
+        self.isRGB_slidder_command = False # Deactivate the flag to allow the call of the assembleDMX() function during slider adjustments
         serialComunication.write(bytes(DMX_frame))
-        # print a tamanho de DMX_frame
-        #print("Comando DMX enviado")
+        # print the size of DMX_frame
+        #print("DMX command sent")
 
     def autoDMXcommand(self):
         global Auto_DMX_send
-        # Envia automaticamente os comandos 
+        # Automatically send commands
         if self.autoSend_dmx_command.isChecked():
-            # Se estiver marcado 
+            # If checked
             self.send_command_dmx.setEnabled(False)
             Auto_DMX_send = True
         else:
-            # Se nao estiver marcado
+            # If not checked
             self.send_command_dmx.setEnabled(True)
             Auto_DMX_send = False
 
@@ -1001,12 +1001,11 @@ class RDM_DMX_Master(QMainWindow, Ui_MainWindow):
         startTime_for_tictoc = time.time()
 
     def toc(self):
-        print("Elapsed time is ",(time.time() - startTime_for_tictoc)*1000," miliseconds.")
+        print("Elapsed time is ",(time.time() - startTime_for_tictoc)*1000," milliseconds.")
 
     def changeSerialPort(self):
-    # Altera a porta serial de acordo com a selecionada
+        # Change the serial port according to the selected one
         global serialComunication
         serialComunication.close()
         serialComunication = serial.Serial(port=self.serialPort.currentText(), baudrate=500000,
                                         bytesize=8, timeout=2, stopbits=serial.STOPBITS_TWO)
-        

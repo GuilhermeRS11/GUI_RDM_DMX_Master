@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="newPrefix">
+    <file>images/language.png</file>
     <file>images/lamp.png</file>
     <file>images/reload.png</file>
   </qresource>
